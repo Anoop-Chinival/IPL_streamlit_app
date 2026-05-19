@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Mac OS
+.DS_Store
+
+# Streamlit specific
+.streamlit/credentials.toml
+
+# Datasets / Large files
+# Ignoring large CSV files to avoid GitHub file size limits (100MB+)
+archive/
+*.csv
+
+# Notebooks
+.ipynb_checkpoints
