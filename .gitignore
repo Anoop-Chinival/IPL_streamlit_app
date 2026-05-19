@@ -19,9 +19,9 @@ __pycache__/
 .streamlit/credentials.toml
 
 # Datasets / Large files
-# Ignoring large CSV files to avoid GitHub file size limits (100MB+)
-archive/
-*.csv
+# (Data is under 100MB, so it can be pushed to GitHub for Streamlit Cloud)
+# archive/
+# *.csv
 
 # Notebooks
 .ipynb_checkpoints
