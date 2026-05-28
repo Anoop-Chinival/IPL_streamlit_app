@@ -90,11 +90,67 @@ st.markdown("""
     
     /* Logo Styling */
     [data-testid="stSidebar"] img {
-        background-color: white;
-        padding: 15px;
-        border-radius: 20px;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        padding: 8px;
+        background: #ffffff;
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), inset 0 0 10px rgba(0,0,0,0.1);
+        border: 2px solid #38BDF8;
+        width: 140px !important;
+        height: 140px !important;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 2rem auto;
+    }
+    
+    /* Sidebar Title & Desc */
+    .sidebar-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(90deg, #38BDF8 0%, #818CF8 50%, #E879F9 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .sidebar-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        color: #94A3B8;
+        text-align: center;
+        line-height: 1.4;
         margin-bottom: 20px;
+    }
+    
+    /* Radio Buttons / Navigation */
+    .stRadio [role=radiogroup] label > div:first-child {
+        display: none !important;
+    }
+    .stRadio [role=radiogroup] label {
+        background: rgba(15, 23, 42, 0.6);
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        width: 100%;
+    }
+    .stRadio [role=radiogroup] label:hover {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(56, 189, 248, 0.4);
+        transform: translateX(4px);
+    }
+    .stRadio [role=radiogroup] label:has(input:checked) {
+        background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, rgba(129, 140, 248, 0.05) 100%);
+        border-left: 4px solid #38BDF8;
+        border-color: rgba(56, 189, 248, 0.3);
+    }
+    .stRadio [role=radiogroup] label p {
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 1.15rem !important;
+        font-weight: 600 !important;
+        color: #F8FAFC !important;
     }
     
     /* Metrics */
@@ -223,11 +279,11 @@ CHART_THEME = "plotly_dark"
 
 # --- Sidebar Navigation ---
 with st.sidebar:
-    st.image("IPL_Logo.png", use_container_width=True)
-    st.title("IPL Analytics")
-    st.markdown("Explore Indian Premier League Data (2008 - 2025).")
-    st.divider()
-    page = st.radio("Navigation", ["📊 Data Explorer", "💡 Deep Insights"])
+    st.image("IPL_Logo.png")
+    st.markdown('<div class="sidebar-title">IPL Analytics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>', unsafe_allow_html=True)
+    st.write("")
+    page = st.radio("Navigation", ["📊 Data Explorer", "💡 Deep Insights"], label_visibility="collapsed")
 
 def plot_mini_histogram(df, column, title, color="#38BDF8"):
     counts = df[column].value_counts().reset_index()
