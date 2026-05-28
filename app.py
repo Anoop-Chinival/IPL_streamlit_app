@@ -15,42 +15,103 @@ st.set_page_config(
 # --- Custom CSS for Premium Look ---
 st.markdown("""
 <style>
+    /* Base App Theme */
     .stApp {
-        background-color: #0F172A;
+        background: linear-gradient(135deg, #020617 0%, #0F172A 100%);
     }
+    
+    /* Typography */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;900&display=swap');
     h1, h2, h3, p, span, div {
         font-family: 'Inter', sans-serif;
     }
-    h1 {
-        color: #F8FAFC;
-        font-weight: 700;
-        letter-spacing: -0.5px;
+    
+    /* Main Title Styling */
+    .main-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(90deg, #38BDF8 0%, #818CF8 50%, #E879F9 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
     }
-    h2, h3 {
-        color: #E2E8F0;
-        font-weight: 600;
-    }
-    .st-bb {
-        background-color: transparent;
-    }
-    [data-testid="stMetricValue"] {
-        color: #F59E0B;
-        font-size: 2rem;
-        font-weight: bold;
-    }
-    div[role="radiogroup"] label p {
-        font-size: 1.25rem !important;
-        padding-top: 5px;
-        padding-bottom: 5px;
-    }
-    .row_heading.level0 {display:none}
-    .blank {display:none}
+    
+    /* Group Headers */
     .group-header {
-        color: #38BDF8 !important;
-        padding-top: 1.5rem;
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #F8FAFC !important;
+        padding-top: 2.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 1px solid #1E293B;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.15);
         margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+    }
+    
+    /* Subheaders */
+    h3 {
+        font-family: 'Outfit', sans-serif;
+        color: #CBD5E1 !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Card Styling for Charts */
+    .stPlotlyChart {
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 15px;
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    .stPlotlyChart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: #020617;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Logo Styling */
+    [data-testid="stSidebar"] img {
+        background-color: white;
+        padding: 15px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    /* Metrics */
+    [data-testid="stMetricValue"] {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.8rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #38BDF8, #818CF8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* Dataframes */
+    [data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -143,11 +204,22 @@ def load_data():
 
 matches, deliveries = load_data()
 
-# --- Global Chart Settings ---
+# --- Global Chart Settings & Aesthetics ---
+def apply_premium_layout(fig, height=350, show_x=False):
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        height=height,
+        margin=dict(l=0, r=40, t=10, b=0),
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=show_x, title=""),
+        yaxis=dict(showgrid=False, zeroline=False, title="", tickfont=dict(color='#E2E8F0', size=13)),
+        hovermode='y unified',
+        font=dict(family="Inter, sans-serif", color="#94A3B8")
+    )
+    fig.update_traces(width=0.55)
+    return fig
+
 CHART_THEME = "plotly_dark"
-PRIMARY_COLOR = "#F59E0B"
-SECONDARY_COLOR = "#38BDF8"
-DISCRETE_COLORS = ["#F59E0B", "#38BDF8", "#10B981", "#8B5CF6", "#EC4899", "#F43F5E", "#EAB308", "#14B8A6"]
 
 # --- Sidebar Navigation ---
 with st.sidebar:
@@ -157,17 +229,18 @@ with st.sidebar:
     st.divider()
     page = st.radio("Navigation", ["📊 Data Explorer", "💡 Deep Insights"])
 
-# --- Helper Functions ---
-def plot_mini_histogram(df, column, title, color=SECONDARY_COLOR):
+def plot_mini_histogram(df, column, title, color="#38BDF8"):
     counts = df[column].value_counts().reset_index()
     counts.columns = [column, 'count']
     if len(counts) > 10:
         counts = counts.head(10)
     
-    fig = px.bar(counts, x=column, y='count', title=title, template=CHART_THEME, color_discrete_sequence=[color])
-    fig.update_layout(margin=dict(l=0, r=0, t=30, b=0), height=150, xaxis_title=None, yaxis_title=None, 
+    fig = px.bar(counts, x=column, y='count', title=title, template=CHART_THEME, color='count', color_continuous_scale='Blues')
+    fig.update_layout(margin=dict(l=0, r=0, t=40, b=0), height=150, xaxis_title=None, yaxis_title=None, 
                       xaxis_showticklabels=False, yaxis_showticklabels=False, plot_bgcolor='rgba(0,0,0,0)', 
-                      paper_bgcolor='rgba(0,0,0,0)', title_font_size=13, title_font_color="#94A3B8")
+                      paper_bgcolor='rgba(0,0,0,0)', title_font_size=14, title_font_color="#E2E8F0",
+                      coloraxis_showscale=False)
+    fig.update_traces(marker_line_width=0, opacity=0.9)
     return fig
 
 # --- Page: Data Explorer ---
@@ -208,8 +281,8 @@ if page == "📊 Data Explorer":
 
 # --- Page: Deep Insights ---
 elif page == "💡 Deep Insights":
-    st.title("💡 Deep IPL Insights (2008-2025)")
-    st.markdown("A structured, analytical deep dive into the numbers that define the Indian Premier League.")
+    st.markdown('<div class="main-title">💡 Deep IPL Insights</div>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #94A3B8; font-size: 1.15rem; margin-bottom: 2rem;'>A structured, analytical deep dive into the numbers that define the Indian Premier League.</p>", unsafe_allow_html=True)
     
     # ---------------------------------------------------------
     # COMPUTATIONS
@@ -287,30 +360,30 @@ elif page == "💡 Deep Insights":
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("### Top 10 Run-Scorers")
-        fig1 = px.bar(top_run_scorers, x='batsman_runs', y='batsman', orientation='h', text='batsman_runs', template=CHART_THEME)
-        fig1.update_traces(marker_color=PRIMARY_COLOR, textposition='inside')
-        fig1.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Runs", yaxis_title="")
-        st.plotly_chart(fig1, use_container_width=True)
+        fig1 = px.bar(top_run_scorers, x='batsman_runs', y='batsman', orientation='h', text='batsman_runs', template=CHART_THEME, color='batsman_runs', color_continuous_scale='Sunsetdark')
+        fig1.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig1.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig1), use_container_width=True)
     with col2:
         st.markdown("### Most Boundaries (4s & 6s)")
-        fig15 = px.bar(boundaries, x='count', y='batsman', orientation='h', text='count', template=CHART_THEME)
-        fig15.update_traces(marker_color='#8B5CF6', textposition='inside')
-        fig15.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Boundaries", yaxis_title="")
-        st.plotly_chart(fig15, use_container_width=True)
+        fig15 = px.bar(boundaries, x='count', y='batsman', orientation='h', text='count', template=CHART_THEME, color='count', color_continuous_scale='Purp')
+        fig15.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig15.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig15), use_container_width=True)
         
     col3, col4 = st.columns(2)
     with col3:
         st.markdown("### Most 6s by a Player")
-        fig13 = px.bar(sixes, x='count', y='batsman', orientation='h', text='count', template=CHART_THEME)
-        fig13.update_traces(marker_color='#F43F5E', textposition='inside')
-        fig13.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Sixes", yaxis_title="")
-        st.plotly_chart(fig13, use_container_width=True)
+        fig13 = px.bar(sixes, x='count', y='batsman', orientation='h', text='count', template=CHART_THEME, color='count', color_continuous_scale='Magma')
+        fig13.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig13.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig13), use_container_width=True)
     with col4:
         st.markdown("### Most 4s by a Player")
-        fig14 = px.bar(fours, x='count', y='batsman', orientation='h', text='count', template=CHART_THEME)
-        fig14.update_traces(marker_color='#10B981', textposition='inside')
-        fig14.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Fours", yaxis_title="")
-        st.plotly_chart(fig14, use_container_width=True)
+        fig14 = px.bar(fours, x='count', y='batsman', orientation='h', text='count', template=CHART_THEME, color='count', color_continuous_scale='Teal')
+        fig14.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig14.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig14), use_container_width=True)
 
     # ---------------------------------------------------------
     # 🎯 BOWLERS INSIGHTS
@@ -319,21 +392,21 @@ elif page == "💡 Deep Insights":
     col5, col6 = st.columns(2)
     with col5:
         st.markdown("### Top 10 Wicket-Takers")
-        fig2 = px.bar(top_wicket_takers, x='wickets', y='bowler', orientation='h', text='wickets', template=CHART_THEME)
-        fig2.update_traces(marker_color=SECONDARY_COLOR, textposition='inside')
-        fig2.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Wickets", yaxis_title="")
-        st.plotly_chart(fig2, use_container_width=True)
+        fig2 = px.bar(top_wicket_takers, x='wickets', y='bowler', orientation='h', text='wickets', template=CHART_THEME, color='wickets', color_continuous_scale='Blues')
+        fig2.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig2.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig2), use_container_width=True)
     with col6:
         st.markdown("### Most Maiden Overs Bowled")
-        fig17 = px.bar(top_maidens, x='Maiden Overs', y='Bowler', orientation='h', text='Maiden Overs', template=CHART_THEME)
-        fig17.update_traces(marker_color='#F59E0B', textposition='inside')
-        fig17.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Maidens", yaxis_title="")
-        st.plotly_chart(fig17, use_container_width=True)
+        fig17 = px.bar(top_maidens, x='Maiden Overs', y='Bowler', orientation='h', text='Maiden Overs', template=CHART_THEME, color='Maiden Overs', color_continuous_scale='Mint')
+        fig17.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig17.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig17), use_container_width=True)
 
     st.markdown("### Common Dismissal Types")
-    fig6 = px.pie(dismissals_count, values='Count', names='Dismissal Kind', hole=0.4, template=CHART_THEME, color_discrete_sequence=DISCRETE_COLORS)
-    fig6.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#0F172A', width=2)))
-    fig6.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', showlegend=False, margin=dict(t=20, b=20), height=350)
+    fig6 = px.pie(dismissals_count, values='Count', names='Dismissal Kind', hole=0.55, template=CHART_THEME, color_discrete_sequence=px.colors.sequential.Tealgrn)
+    fig6.update_traces(textposition='outside', textinfo='percent+label', marker=dict(line=dict(color='#0F172A', width=3)), pull=[0.02]*len(dismissals_count))
+    fig6.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', showlegend=False, margin=dict(t=20, b=20), height=400, font=dict(family="Inter, sans-serif", color="#F8FAFC", size=13))
     st.plotly_chart(fig6, use_container_width=True)
 
     # ---------------------------------------------------------
@@ -343,60 +416,61 @@ elif page == "💡 Deep Insights":
     col7, col8 = st.columns(2)
     with col7:
         st.markdown("### Most IPL Trophies Won")
-        fig11 = px.bar(trophies, x='Trophies', y='Team', orientation='h', text='Trophies', template=CHART_THEME)
-        fig11.update_traces(marker_color=SECONDARY_COLOR, textposition='inside')
-        fig11.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Trophies", yaxis_title="")
-        st.plotly_chart(fig11, use_container_width=True)
+        fig11 = px.bar(trophies, x='Trophies', y='Team', orientation='h', text='Trophies', template=CHART_THEME, color='Trophies', color_continuous_scale='Oryel')
+        fig11.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig11.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig11), use_container_width=True)
     with col8:
         st.markdown("### Most Matches Won")
-        fig3 = px.bar(team_wins.head(10).sort_values(by='Wins', ascending=True), x='Wins', y='Team', orientation='h', text='Wins', template=CHART_THEME)
-        fig3.update_traces(marker_color=PRIMARY_COLOR, textposition='inside')
-        fig3.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Matches Won", yaxis_title="")
-        st.plotly_chart(fig3, use_container_width=True)
+        fig3 = px.bar(team_wins.head(10).sort_values(by='Wins', ascending=True), x='Wins', y='Team', orientation='h', text='Wins', template=CHART_THEME, color='Wins', color_continuous_scale='Plasma')
+        fig3.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig3.update_layout(coloraxis_showscale=False)
+        st.plotly_chart(apply_premium_layout(fig3), use_container_width=True)
         
     col9, col10 = st.columns(2)
     with col9:
         st.markdown("### Total Runs Scored by Franchise")
-        fig12 = px.bar(team_total_runs, x='total_runs', y='batting_team', orientation='h', text='total_runs', template=CHART_THEME)
-        fig12.update_traces(marker_color=PRIMARY_COLOR, textposition='inside')
-        fig12.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Runs", yaxis_title="")
-        st.plotly_chart(fig12, use_container_width=True)
+        fig12 = px.bar(team_total_runs, x='total_runs', y='batting_team', orientation='h', text='total_runs', template=CHART_THEME, color='total_runs', color_continuous_scale='Sunsetdark')
+        fig12.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig12.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig12), use_container_width=True)
     with col10:
         st.markdown("### Total Wickets Taken by Franchise")
-        fig_tw = px.bar(team_total_wickets, x='wickets', y='bowling_team', orientation='h', text='wickets', template=CHART_THEME)
-        fig_tw.update_traces(marker_color=SECONDARY_COLOR, textposition='inside')
-        fig_tw.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Wickets", yaxis_title="")
-        st.plotly_chart(fig_tw, use_container_width=True)
+        fig_tw = px.bar(team_total_wickets, x='wickets', y='bowling_team', orientation='h', text='wickets', template=CHART_THEME, color='wickets', color_continuous_scale='Teal')
+        fig_tw.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig_tw.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig_tw), use_container_width=True)
         
     col11, col12 = st.columns(2)
     with col11:
         st.markdown("### Average Runs Per Match Across Seasons")
         fig5 = px.line(avg_runs_season, x='season', y='total_runs', markers=True, template=CHART_THEME)
-        fig5.update_traces(line_color=PRIMARY_COLOR, line_width=4, marker=dict(size=10, color=SECONDARY_COLOR, line=dict(width=2, color='#0F172A')))
-        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+        fig5.update_traces(line_color='#38BDF8', line_width=4, marker=dict(size=12, color='#818CF8', line=dict(width=3, color='#020617')))
+        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=20, t=20, b=0))
         st.plotly_chart(fig5, use_container_width=True)
     with col12:
         st.markdown("### Toss Impact on Match Outcome")
-        fig4 = px.pie(toss_impact, values='Count', names='Won Match after Winning Toss', hole=0.5, template=CHART_THEME, color_discrete_sequence=['#10B981', '#F43F5E'])
-        fig4.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#0F172A', width=2)))
-        fig4.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', showlegend=False, margin=dict(t=20, b=20))
+        fig4 = px.pie(toss_impact, values='Count', names='Won Match after Winning Toss', hole=0.55, template=CHART_THEME, color_discrete_sequence=['#10B981', '#F43F5E'])
+        fig4.update_traces(textposition='outside', textinfo='percent+label', marker=dict(line=dict(color='#0F172A', width=3)), pull=[0.02, 0.02])
+        fig4.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', showlegend=False, margin=dict(t=20, b=20), height=400, font=dict(family="Inter, sans-serif", color="#F8FAFC", size=13))
         st.plotly_chart(fig4, use_container_width=True)
         
     col13, col14 = st.columns(2)
     with col13:
         st.markdown("### Average Scoring Rate by Over (1 to 20)")
-        fig8 = px.bar(runs_by_over, x='over', y='Expected Runs per Over', template=CHART_THEME)
-        fig8.update_traces(marker_color=SECONDARY_COLOR, textposition='outside', texttemplate='%{y:.1f}')
-        fig8.update_layout(xaxis_title="Over Number", yaxis_title="Avg Runs per Over", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
-        fig8.update_xaxes(tickmode='linear', tick0=1, dtick=1)
+        fig8 = px.bar(runs_by_over, x='over', y='Expected Runs per Over', template=CHART_THEME, color='Expected Runs per Over', color_continuous_scale='Purp')
+        fig8.update_traces(textposition='outside', texttemplate='%{y:.1f}', textfont=dict(color='#F8FAFC', size=11), marker_line_width=0)
+        fig8.update_layout(coloraxis_showscale=False, xaxis_title="Over Number", yaxis_title="Avg Runs per Over", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=20, t=30, b=0), font=dict(family="Inter, sans-serif", color="#94A3B8"))
+        fig8.update_xaxes(tickmode='linear', tick0=1, dtick=1, showgrid=False)
+        fig8.update_yaxes(showgrid=False)
         st.plotly_chart(fig8, use_container_width=True)
     with col14:
         st.markdown("### Highest Run Score in a Single Over")
         fig16 = go.Figure(data=[go.Table(
-            header=dict(values=['<b>Team</b>', '<b>Over No.</b>', '<b>Runs Scored</b>'], fill_color='#1E293B', align='left', font=dict(color='white', size=14)),
-            cells=dict(values=[highest_over.batting_team, highest_over.over, highest_over.total_runs], fill_color='#0F172A', align='left', font=dict(color='#E2E8F0', size=13), height=30))
+            header=dict(values=['<b>Team</b>', '<b>Over No.</b>', '<b>Runs Scored</b>'], fill_color='rgba(30, 41, 59, 0.8)', align='left', font=dict(color='white', size=14, family='Outfit')),
+            cells=dict(values=[highest_over.batting_team, highest_over.over, highest_over.total_runs], fill_color='rgba(15, 23, 42, 0.5)', align='left', font=dict(color='#E2E8F0', size=13, family='Inter'), height=35))
         ])
-        fig16.update_layout(margin=dict(l=0, r=0, t=20, b=0), height=350, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+        fig16.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=380, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig16, use_container_width=True)
 
     # ---------------------------------------------------------
@@ -406,13 +480,13 @@ elif page == "💡 Deep Insights":
     col15, col16 = st.columns(2)
     with col15:
         st.markdown("### Most 'Player of the Match' Awards")
-        fig7 = px.bar(pom_count, x='Awards', y='Player', orientation='h', text='Awards', template=CHART_THEME)
-        fig7.update_traces(marker_color=PRIMARY_COLOR, textposition='inside')
-        fig7.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Awards", yaxis_title="")
-        st.plotly_chart(fig7, use_container_width=True)
+        fig7 = px.bar(pom_count, x='Awards', y='Player', orientation='h', text='Awards', template=CHART_THEME, color='Awards', color_continuous_scale='Sunsetdark')
+        fig7.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig7.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig7), use_container_width=True)
     with col16:
         st.markdown("### Venues Hosting Most Matches")
-        fig10 = px.bar(venues_count, x='Matches Hosted', y='Venue', orientation='h', text='Matches Hosted', template=CHART_THEME)
-        fig10.update_traces(marker_color=SECONDARY_COLOR, textposition='inside')
-        fig10.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Matches", yaxis_title="")
-        st.plotly_chart(fig10, use_container_width=True)
+        fig10 = px.bar(venues_count, x='Matches Hosted', y='Venue', orientation='h', text='Matches Hosted', template=CHART_THEME, color='Matches Hosted', color_continuous_scale='Blues')
+        fig10.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+        fig10.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(apply_premium_layout(fig10), use_container_width=True)
