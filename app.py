@@ -7,7 +7,6 @@ import os
 # --- Page Configuration ---
 st.set_page_config(
     page_title="IPL Analytics Dashboard",
-    page_icon="🏏",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -31,11 +30,10 @@ st.markdown("""
         font-family: 'Outfit', sans-serif;
         font-size: 3.5rem;
         font-weight: 900;
-        background: linear-gradient(90deg, #38BDF8 0%, #818CF8 50%, #E879F9 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #F8FAFC;
         margin-bottom: 0.5rem;
         letter-spacing: -1px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
     
     /* Group Headers */
@@ -112,11 +110,10 @@ st.markdown("""
         font-family: 'Outfit', sans-serif;
         font-size: 2.2rem;
         font-weight: 900;
-        background: linear-gradient(90deg, #38BDF8 0%, #818CF8 50%, #E879F9 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #F8FAFC;
         text-align: center;
         margin-bottom: 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
     .sidebar-desc {
         font-family: 'Inter', sans-serif;
@@ -289,7 +286,7 @@ with st.sidebar:
     st.markdown('<div class="sidebar-title">IPL Analytics</div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>', unsafe_allow_html=True)
     st.write("")
-    page = st.radio("Navigation", ["📊 Data Explorer", "💡 Deep Insights"], label_visibility="collapsed")
+    page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], label_visibility="collapsed")
 
 def plot_mini_histogram(df, column, title, color="#38BDF8"):
     counts = df[column].value_counts().reset_index()
@@ -306,8 +303,8 @@ def plot_mini_histogram(df, column, title, color="#38BDF8"):
     return fig
 
 # --- Page: Data Explorer ---
-if page == "📊 Data Explorer":
-    st.title("📊 Data Explorer")
+if page == "Data Explorer":
+    st.title("Data Explorer")
     st.markdown("Browse and filter through the complete historical datasets with a high-level overview.")
     st.divider()
     
@@ -342,8 +339,8 @@ if page == "📊 Data Explorer":
         st.dataframe(deliveries.head(10000), height=500, use_container_width=True)
 
 # --- Page: Deep Insights ---
-elif page == "💡 Deep Insights":
-    st.markdown('<div class="main-title">💡 Deep IPL Insights</div>', unsafe_allow_html=True)
+elif page == "Deep Insights":
+    st.markdown('<div class="main-title">Deep IPL Insights</div>', unsafe_allow_html=True)
     st.markdown("<p style='color: #94A3B8; font-size: 1.15rem; margin-bottom: 2rem;'>A structured, analytical deep dive into the numbers that define the Indian Premier League.</p>", unsafe_allow_html=True)
     
     # ---------------------------------------------------------
@@ -416,9 +413,9 @@ elif page == "💡 Deep Insights":
     venues_count.columns = ['Venue', 'Matches Hosted']
 
     # ---------------------------------------------------------
-    # 🏏 BATSMEN INSIGHTS
+    # BATSMEN INSIGHTS
     # ---------------------------------------------------------
-    st.markdown('<h2 class="group-header">🏏 Batsmen Insights</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="group-header">Batsmen Insights</h2>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("### Top 10 Run-Scorers")
@@ -448,9 +445,9 @@ elif page == "💡 Deep Insights":
         st.plotly_chart(apply_premium_layout(fig14), use_container_width=True)
 
     # ---------------------------------------------------------
-    # 🎯 BOWLERS INSIGHTS
+    # BOWLERS INSIGHTS
     # ---------------------------------------------------------
-    st.markdown('<h2 class="group-header">🎯 Bowlers Insights</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="group-header">Bowlers Insights</h2>', unsafe_allow_html=True)
     col5, col6 = st.columns(2)
     with col5:
         st.markdown("### Top 10 Wicket-Takers")
@@ -472,9 +469,9 @@ elif page == "💡 Deep Insights":
     st.plotly_chart(fig6, use_container_width=True)
 
     # ---------------------------------------------------------
-    # 🏟️ TEAM INSIGHTS
+    # TEAM INSIGHTS
     # ---------------------------------------------------------
-    st.markdown('<h2 class="group-header">🏟️ Team Insights</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="group-header">Team Insights</h2>', unsafe_allow_html=True)
     col7, col8 = st.columns(2)
     with col7:
         st.markdown("### Most IPL Trophies Won")
@@ -536,9 +533,9 @@ elif page == "💡 Deep Insights":
         st.plotly_chart(fig16, use_container_width=True)
 
     # ---------------------------------------------------------
-    # ⭐ GENERAL RECORDS
+    # GENERAL RECORDS
     # ---------------------------------------------------------
-    st.markdown('<h2 class="group-header">⭐ General Records</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="group-header">General Records</h2>', unsafe_allow_html=True)
     col15, col16 = st.columns(2)
     with col15:
         st.markdown("### Most 'Player of the Match' Awards")
