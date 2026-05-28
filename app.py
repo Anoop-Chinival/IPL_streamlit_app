@@ -95,8 +95,8 @@ st.markdown("""
     
     /* Header Logo from st.image */
     [data-testid="stImage"] img {
-        width: 120px !important;
-        height: 120px !important;
+        max-width: 110px !important;
+        aspect-ratio: 1 / 1;
         border-radius: 50%;
         background: #ffffff;
         padding: 5px;
@@ -135,6 +135,7 @@ st.markdown("""
     .stRadio [role=radiogroup] {
         display: flex;
         flex-direction: row;
+        flex-wrap: nowrap !important;
         justify-content: center;
         background: rgba(15, 23, 42, 0.6);
         border-radius: 30px;
@@ -150,12 +151,13 @@ st.markdown("""
     .stRadio [role=radiogroup] label {
         background: transparent !important;
         border: none !important;
-        padding: 12px 35px !important;
+        padding: 10px 20px !important;
         border-radius: 25px !important;
         margin: 0 !important;
         transition: all 0.3s ease;
         cursor: pointer;
         text-align: center;
+        white-space: nowrap !important;
     }
     .stRadio [role=radiogroup] label:hover {
         background: rgba(255, 255, 255, 0.05) !important;
@@ -303,21 +305,19 @@ def apply_premium_layout(fig, height=350, show_x=False):
 CHART_THEME = "plotly_dark"
 
 # --- Top Navigation ---
-col1, col_logo, col_text, col2 = st.columns([1.5, 1, 3, 1.5])
+st.markdown('<div class="header-text-container" style="margin-top: 0;">', unsafe_allow_html=True)
+col_logo, col_text = st.columns([1, 4])
 with col_logo:
-    st.image("IPL_Logo.png", width=120)
+    st.image("IPL_Logo.png")
 with col_text:
     st.markdown('''
-        <div class="header-text-container">
-            <div class="header-title">IPL Analytics</div>
-            <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
-        </div>
+        <div class="header-title">IPL Analytics</div>
+        <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
     ''', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("")
-nav_1, nav_main, nav_2 = st.columns([1, 2, 1])
-with nav_main:
-    page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
+page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
 st.divider()
 
 def plot_mini_histogram(df, column, title, color="#38BDF8"):
