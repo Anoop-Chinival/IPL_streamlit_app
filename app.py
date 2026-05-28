@@ -872,12 +872,15 @@ elif page == "Player Comparison":
                 best_figure = f"{int(best['w'])}/{int(best['r'])}"
                 best_w = int(best['w'])
                 
+                balls_per_wicket = round(valid_balls / wickets, 2) if wickets > 0 else 0
+                
                 bowlers_stats.append({
                     "Player": player,
                     "Overs Bowled": overs_bowled,
                     "Wickets": wickets,
                     "Economy": economy,
                     "Best": best_figure,
+                    "Balls/Wicket": balls_per_wicket,
                     "Best Match Wickets": best_w
                 })
                 
