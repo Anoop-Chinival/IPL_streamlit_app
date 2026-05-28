@@ -592,7 +592,7 @@ elif page == "Player Comparison":
     with tab1:
         st.markdown("### Compare Batsmen")
         all_batsmen = sorted(deliveries['batsman'].dropna().unique())
-        selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "MS Dhoni", "Rohit Sharma"])
+        selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "Mahendra Singh Dhoni", "Rohit Sharma"])
         
         if len(selected_batsmen) > 0:
             batsmen_stats = []
