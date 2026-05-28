@@ -591,19 +591,19 @@ elif page == "Player Comparison":
     
     with tab1:
         st.markdown("### Compare Batsmen")
-        all_batsmen = sorted(deliveries_df['batsman'].dropna().unique())
+        all_batsmen = sorted(deliveries['batsman'].dropna().unique())
         selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "MS Dhoni", "Rohit Sharma"])
         
         if len(selected_batsmen) > 0:
             batsmen_stats = []
             for player in selected_batsmen:
-                pdf = deliveries_df[deliveries_df['batsman'] == player]
+                pdf = deliveries[deliveries['batsman'] == player]
                 if pdf.empty: continue
                 runs = int(pdf['batsman_runs'].sum())
                 balls = len(pdf[pdf['isWide'] == 0])
                 sr = round((runs / balls) * 100, 2) if balls > 0 else 0
                 
-                dismissals = deliveries_df[deliveries_df['player_dismissed'] == player]
+                dismissals = deliveries[deliveries['player_dismissed'] == player]
                 outs = len(dismissals)
                 avg = round(runs / outs, 2) if outs > 0 else runs
                 
@@ -647,13 +647,13 @@ elif page == "Player Comparison":
 
     with tab2:
         st.markdown("### Compare Bowlers")
-        all_bowlers = sorted(deliveries_df['bowler'].dropna().unique())
+        all_bowlers = sorted(deliveries['bowler'].dropna().unique())
         selected_bowlers = st.multiselect("Select Bowlers to Compare", all_bowlers, default=["Lasith Malinga", "Jasprit Bumrah", "Rashid Khan"])
         
         if len(selected_bowlers) > 0:
             bowlers_stats = []
             for player in selected_bowlers:
-                pdf = deliveries_df[deliveries_df['bowler'] == player]
+                pdf = deliveries[deliveries['bowler'] == player]
                 if pdf.empty: continue
                 
                 matches = pdf['matchId'].nunique()
