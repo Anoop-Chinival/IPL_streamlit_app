@@ -317,7 +317,7 @@ with col_text:
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("")
-page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
+page = st.radio("Navigation", ["Data Explorer", "Deep Insights", "Player Comparison"], horizontal=True, label_visibility="collapsed")
 st.divider()
 
 def plot_mini_histogram(df, column, title, color="#38BDF8"):
@@ -581,3 +581,120 @@ elif page == "Deep Insights":
         fig10.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
         fig10.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
         st.plotly_chart(apply_premium_layout(fig10), use_container_width=True)
+
+# --- Page: Player Comparison ---
+elif page == "Player Comparison":
+    st.title("Player Comparison")
+    st.markdown("Select multiple players to compare their Head-to-Head statistics side-by-side.")
+    
+    tab1, tab2 = st.tabs(["🏏 Batsmen Comparison", "🎯 Bowlers Comparison"])
+    
+    with tab1:
+        st.markdown("### Compare Batsmen")
+        all_batsmen = sorted(deliveries_df['batsman'].dropna().unique())
+        selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "MS Dhoni", "Rohit Sharma"])
+        
+        if len(selected_batsmen) > 0:
+            batsmen_stats = []
+            for player in selected_batsmen:
+                pdf = deliveries_df[deliveries_df['batsman'] == player]
+                if pdf.empty: continue
+                runs = int(pdf['batsman_runs'].sum())
+                balls = len(pdf[pdf['isWide'] == 0])
+                sr = round((runs / balls) * 100, 2) if balls > 0 else 0
+                
+                dismissals = deliveries_df[deliveries_df['player_dismissed'] == player]
+                outs = len(dismissals)
+                avg = round(runs / outs, 2) if outs > 0 else runs
+                
+                matches = pdf['matchId'].nunique()
+                
+                highest = pdf.groupby('matchId')['batsman_runs'].sum().max()
+                
+                fours = len(pdf[pdf['batsman_runs'] == 4])
+                sixes = len(pdf[pdf['batsman_runs'] == 6])
+                
+                batsmen_stats.append({
+                    "Player": player,
+                    "Innings": matches,
+                    "Runs": runs,
+                    "Average": avg,
+                    "Strike Rate": sr,
+                    "Highest Score": highest,
+                    "4s": fours,
+                    "6s": sixes
+                })
+            
+            if batsmen_stats:
+                comp_df = pd.DataFrame(batsmen_stats)
+                st.dataframe(comp_df, use_container_width=True)
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    fig_r = px.bar(comp_df, x="Player", y="Runs", text="Runs", color="Player", title="Total Runs Comparison", template=CHART_THEME)
+                    fig_r.update_traces(textposition='outside')
+                    st.plotly_chart(apply_premium_layout(fig_r), use_container_width=True)
+                with col2:
+                    fig_a = px.bar(comp_df, x="Player", y="Average", text="Average", color="Player", title="Batting Average Comparison", template=CHART_THEME)
+                    fig_a.update_traces(textposition='outside')
+                    st.plotly_chart(apply_premium_layout(fig_a), use_container_width=True)
+                with col3:
+                    fig_sr = px.bar(comp_df, x="Player", y="Strike Rate", text="Strike Rate", color="Player", title="Strike Rate Comparison", template=CHART_THEME)
+                    fig_sr.update_traces(textposition='outside')
+                    st.plotly_chart(apply_premium_layout(fig_sr), use_container_width=True)
+
+    with tab2:
+        st.markdown("### Compare Bowlers")
+        all_bowlers = sorted(deliveries_df['bowler'].dropna().unique())
+        selected_bowlers = st.multiselect("Select Bowlers to Compare", all_bowlers, default=["Lasith Malinga", "Jasprit Bumrah", "Rashid Khan"])
+        
+        if len(selected_bowlers) > 0:
+            bowlers_stats = []
+            for player in selected_bowlers:
+                pdf = deliveries_df[deliveries_df['bowler'] == player]
+                if pdf.empty: continue
+                
+                matches = pdf['matchId'].nunique()
+                
+                runs_conceded = int(pdf['batsman_runs'].sum() + pdf['isWide'].sum() + pdf['isNoBall'].sum())
+                
+                valid_balls = len(pdf[(pdf['isWide'] == 0) & (pdf['isNoBall'] == 0)])
+                overs = valid_balls / 6.0
+                economy = round(runs_conceded / overs, 2) if overs > 0 else 0
+                
+                bowler_wickets = pdf[pdf['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket'])]
+                wickets = len(bowler_wickets)
+                
+                avg = round(runs_conceded / wickets, 2) if wickets > 0 else 0
+                sr = round(valid_balls / wickets, 2) if wickets > 0 else 0
+                
+                bowlers_stats.append({
+                    "Player": player,
+                    "Innings": matches,
+                    "Wickets": wickets,
+                    "Economy": economy,
+                    "Bowling Average": avg,
+                    "Bowling SR": sr
+                })
+                
+            if bowlers_stats:
+                comp_bdf = pd.DataFrame(bowlers_stats)
+                st.dataframe(comp_bdf, use_container_width=True)
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    fig_w = px.bar(comp_bdf, x="Player", y="Wickets", text="Wickets", color="Player", title="Total Wickets", template=CHART_THEME)
+                    fig_w.update_traces(textposition='outside')
+                    st.plotly_chart(apply_premium_layout(fig_w), use_container_width=True)
+                with col2:
+                    fig_ec = px.bar(comp_bdf, x="Player", y="Economy", text="Economy", color="Player", title="Economy Rate (Lower is Better)", template=CHART_THEME)
+                    fig_ec.update_traces(textposition='outside')
+                    st.plotly_chart(apply_premium_layout(fig_ec), use_container_width=True)
+                with col3:
+                    fig_ba = px.bar(comp_bdf, x="Player", y="Bowling Average", text="Bowling Average", color="Player", title="Bowling Average", template=CHART_THEME)
+                    fig_ba.update_traces(textposition='outside')
+                    st.plotly_chart(apply_premium_layout(fig_ba), use_container_width=True)
