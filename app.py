@@ -792,7 +792,8 @@ elif page == "Player Comparison":
                 pdf = deliveries[deliveries['batsman'] == player]
                 if pdf.empty: continue
                 runs = int(pdf['batsman_runs'].sum())
-                balls = len(pdf[pdf['isWide'] == 0])
+                wides = pdf['isWide'].fillna(0)
+                balls = len(pdf[wides == 0])
                 sr = round((runs / balls) * 100, 2) if balls > 0 else 0
                 
                 dismissals = deliveries[deliveries['player_dismissed'] == player]
