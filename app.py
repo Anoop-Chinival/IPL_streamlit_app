@@ -212,14 +212,14 @@ st.markdown("""
             border-radius: 30px !important;
             padding: 4px !important;
             width: 100% !important;
-            justify-content: flex-start;
+            justify-content: space-between;
         }
         .stRadio [role=radiogroup] label {
-            padding: 8px 12px !important;
-            flex: 0 0 auto;
+            padding: 8px 4px !important;
+            flex: 1 1 auto;
         }
         .stRadio [role=radiogroup] label p {
-            font-size: 0.85rem !important;
+            font-size: 0.72rem !important;
             white-space: nowrap !important;
         }
     }
@@ -525,16 +525,61 @@ def apply_premium_layout(fig, height=350, show_x=False):
 CHART_THEME = "plotly_dark"
 
 # --- Top Navigation ---
-st.markdown('<div class="header-text-container" style="margin-top: 0;">', unsafe_allow_html=True)
-col_logo, col_text = st.columns([1, 4])
-with col_logo:
-    st.image("IPL_Logo.png")
-with col_text:
-    st.markdown('''
-        <div class="header-title">IPL Analytics</div>
-        <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
-    ''', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+import base64
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+try:
+    img_base64 = get_base64_of_bin_file('IPL_Logo.png')
+    logo_html = f'<img src="data:image/png;base64,{img_base64}" width="85" style="border-radius: 50%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); flex-shrink: 0;">'
+except:
+    logo_html = ""
+
+st.markdown(f"""
+    <style>
+        .glass-header {{
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }}
+        .glass-header h1 {{
+            margin: 0; font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 900; 
+            background: linear-gradient(90deg, #FFFFFF, #94A3B8); -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; letter-spacing: -1px; line-height: 1.1;
+        }}
+        .glass-header p {{
+            margin: 6px 0 0 0; color: #94A3B8; font-size: 1rem; font-family: 'Inter', sans-serif; line-height: 1.4;
+        }}
+        @media (max-width: 768px) {{
+            .glass-header {{
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                padding: 20px 15px;
+            }}
+            .glass-header h1 {{
+                font-size: 2rem;
+            }}
+        }}
+    </style>
+    <div class="glass-header">
+        {logo_html}
+        <div>
+            <h1>IPL Analytics</h1>
+            <p>Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</p>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
 
 st.write("")
 page = st.radio("Navigation", ["Data Explorer", "Deep Insights", "Player Comparison"], horizontal=True, label_visibility="collapsed")
