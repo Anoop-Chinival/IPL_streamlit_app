@@ -135,7 +135,7 @@ st.markdown("""
     .stRadio [role=radiogroup] {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap !important;
+        flex-wrap: nowrap !important;
         justify-content: center;
         background: rgba(15, 23, 42, 0.6);
         border-radius: 30px;
@@ -146,6 +146,12 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.05);
         box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
         gap: 5px;
+        overflow-x: auto;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .stRadio [role=radiogroup]::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
     }
     .stRadio [role=radiogroup] label > div:first-child {
         display: none !important;
@@ -202,19 +208,19 @@ st.markdown("""
     /* Responsive Media Queries for Mobile/Small Screens */
     @media (max-width: 768px) {
         .stRadio [role=radiogroup] {
-            flex-direction: column !important;
-            border-radius: 20px !important;
+            flex-direction: row !important;
+            border-radius: 30px !important;
+            padding: 4px !important;
             width: 100% !important;
+            justify-content: flex-start;
         }
         .stRadio [role=radiogroup] label {
-            width: 100% !important;
-            border-radius: 15px !important;
-            padding: 12px !important;
-            white-space: normal !important;
+            padding: 8px 12px !important;
+            flex: 0 0 auto;
         }
         .stRadio [role=radiogroup] label p {
-            font-size: 1rem !important;
-            white-space: normal !important;
+            font-size: 0.85rem !important;
+            white-space: nowrap !important;
         }
     }
 </style>
