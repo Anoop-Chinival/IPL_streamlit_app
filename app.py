@@ -266,13 +266,13 @@ def apply_premium_layout(fig, height=350, show_x=False):
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         height=height,
-        margin=dict(l=0, r=40, t=10, b=0),
+        margin=dict(l=0, r=60, t=35, b=0),
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=show_x, title=""),
         yaxis=dict(showgrid=False, zeroline=False, title="", tickfont=dict(color='#E2E8F0', size=13)),
         hovermode='closest',
         font=dict(family="Inter, sans-serif", color="#94A3B8")
     )
-    fig.update_traces(width=0.55)
+    fig.update_traces(width=0.55, cliponaxis=False)
     return fig
 
 CHART_THEME = "plotly_dark"
