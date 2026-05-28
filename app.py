@@ -215,12 +215,13 @@ st.markdown("""
             justify-content: space-between;
         }
         .stRadio [role=radiogroup] label {
-            padding: 8px 4px !important;
+            padding: 6px 2px !important;
             flex: 1 1 auto;
         }
         .stRadio [role=radiogroup] label p {
-            font-size: 0.72rem !important;
+            font-size: 0.65rem !important;
             white-space: nowrap !important;
+            letter-spacing: -0.2px;
         }
     }
 </style>
@@ -533,7 +534,7 @@ def get_base64_of_bin_file(bin_file):
 
 try:
     img_base64 = get_base64_of_bin_file('IPL_Logo.png')
-    logo_html = f'<img src="data:image/png;base64,{img_base64}" width="85" style="border-radius: 50%; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); flex-shrink: 0;">'
+    logo_html = f'<img src="data:image/png;base64,{img_base64}">'
 except:
     logo_html = ""
 
@@ -545,12 +546,21 @@ st.markdown(f"""
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
+            flex-direction: row;
             align-items: center;
             gap: 20px;
             margin-bottom: 25px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            width: fit-content;
+            max-width: 100%;
+        }}
+        .glass-header img {{
+            width: 85px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            flex-shrink: 0;
         }}
         .glass-header h1 {{
             margin: 0; font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 900; 
@@ -562,13 +572,17 @@ st.markdown(f"""
         }}
         @media (max-width: 768px) {{
             .glass-header {{
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-                padding: 20px 15px;
+                padding: 15px 15px;
+                gap: 12px;
+            }}
+            .glass-header img {{
+                width: 60px;
             }}
             .glass-header h1 {{
-                font-size: 2rem;
+                font-size: 1.6rem;
+            }}
+            .glass-header p {{
+                font-size: 0.8rem;
             }}
         }}
     </style>
