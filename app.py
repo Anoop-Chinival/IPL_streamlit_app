@@ -3,7 +3,13 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import os
-from base64_logo import LOGO_B64
+import base64
+
+try:
+    with open(os.path.join(os.path.dirname(__file__), 'IPL_Logo.png'), "rb") as image_file:
+        LOGO_B64 = base64.b64encode(image_file.read()).decode()
+except Exception:
+    LOGO_B64 = ""
 
 # --- Page Configuration ---
 st.set_page_config(
