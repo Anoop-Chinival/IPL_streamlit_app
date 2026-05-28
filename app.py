@@ -862,16 +862,23 @@ elif page == "Player Comparison":
                 bowler_wickets = pdf[pdf['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket'])]
                 wickets = len(bowler_wickets)
                 
-                avg = round(runs_conceded / wickets, 2) if wickets > 0 else 0
-                sr = round(valid_balls / wickets, 2) if wickets > 0 else 0
+                match_stats = pdf.groupby('matchId').apply(
+                    lambda x: pd.Series({
+                        'w': x['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket']).sum(),
+                        'r': (x['batsman_runs'] + x['isWide'].fillna(0) + x['isNoBall'].fillna(0)).sum()
+                    })
+                ).reset_index()
+                best = match_stats.sort_values(by=['w', 'r'], ascending=[False, True]).iloc[0] if not match_stats.empty else pd.Series({'w': 0, 'r': 0})
+                best_figure = f"{int(best['w'])}/{int(best['r'])}"
+                best_w = int(best['w'])
                 
                 bowlers_stats.append({
                     "Player": player,
                     "Overs Bowled": overs_bowled,
                     "Wickets": wickets,
                     "Economy": economy,
-                    "Bowling Average": avg,
-                    "Bowling SR": sr
+                    "Best": best_figure,
+                    "Best Match Wickets": best_w
                 })
                 
             if bowlers_stats:
@@ -890,6 +897,6 @@ elif page == "Player Comparison":
                     fig_ec.update_traces(textposition='outside')
                     st.plotly_chart(apply_premium_layout(fig_ec), use_container_width=True)
                 with col3:
-                    fig_ba = px.bar(comp_bdf, x="Player", y="Bowling Average", text="Bowling Average", color="Player", title="Bowling Average", template=CHART_THEME)
+                    fig_ba = px.bar(comp_bdf, x="Player", y="Best Match Wickets", text="Best", color="Player", title="Best Bowling Figures", template=CHART_THEME)
                     fig_ba.update_traces(textposition='outside')
                     st.plotly_chart(apply_premium_layout(fig_ba), use_container_width=True)
