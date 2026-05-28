@@ -3,9 +3,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import os
-import base64
-
-LOGO_B64 = "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"
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -96,37 +93,26 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Header UI */
-    .app-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 25px;
-        background: rgba(15, 23, 42, 0.4);
-        padding: 25px 35px;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        margin: 0 auto 30px auto;
-        max-width: 650px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-    }
-    .header-logo {
-        width: 100px;
-        height: 100px;
+    /* Header Logo from st.image */
+    [data-testid="stImage"] img {
+        width: 120px !important;
+        height: 120px !important;
         border-radius: 50%;
         background: #ffffff;
         padding: 5px;
         box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), inset 0 0 10px rgba(0,0,0,0.1);
         border: 2px solid #38BDF8;
         object-fit: contain;
-        flex-shrink: 0;
+        display: block;
+        margin: 0 auto;
     }
-    .header-text {
+    
+    .header-text-container {
         display: flex;
         flex-direction: column;
-        text-align: left;
+        justify-content: center;
+        height: 100%;
+        margin-top: 25px; /* Vertical alignment */
     }
     .header-title {
         font-family: 'Outfit', sans-serif;
@@ -317,16 +303,18 @@ def apply_premium_layout(fig, height=350, show_x=False):
 CHART_THEME = "plotly_dark"
 
 # --- Top Navigation ---
-header_html = f"""
-<div class="app-header">
-    <img src="data:image/png;base64,{{LOGO_B64}}" class="header-logo">
-    <div class="header-text">
-        <div class="header-title">IPL Analytics</div>
-        <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
-    </div>
-</div>
-"""
-st.markdown(header_html, unsafe_allow_html=True)
+col_space, col_main, col_space2 = st.columns([1, 4, 1])
+with col_main:
+    c1, c2 = st.columns([1.5, 3.5])
+    with c1:
+        st.image("IPL_Logo.png", use_container_width=True)
+    with c2:
+        st.markdown('''
+            <div class="header-text-container">
+                <div class="header-title">IPL Analytics</div>
+                <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
+            </div>
+        ''', unsafe_allow_html=True)
 
 st.write("")
 page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
