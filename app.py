@@ -303,21 +303,21 @@ def apply_premium_layout(fig, height=350, show_x=False):
 CHART_THEME = "plotly_dark"
 
 # --- Top Navigation ---
-col_space, col_main, col_space2 = st.columns([1, 4, 1])
-with col_main:
-    c1, c2 = st.columns([1.5, 3.5])
-    with c1:
-        st.image("IPL_Logo.png", use_container_width=True)
-    with c2:
-        st.markdown('''
-            <div class="header-text-container">
-                <div class="header-title">IPL Analytics</div>
-                <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
-            </div>
-        ''', unsafe_allow_html=True)
+col1, col_logo, col_text, col2 = st.columns([1.5, 1, 3, 1.5])
+with col_logo:
+    st.image("IPL_Logo.png", width=120)
+with col_text:
+    st.markdown('''
+        <div class="header-text-container">
+            <div class="header-title">IPL Analytics</div>
+            <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
+        </div>
+    ''', unsafe_allow_html=True)
 
 st.write("")
-page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
+nav_1, nav_main, nav_2 = st.columns([1, 2, 1])
+with nav_main:
+    page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
 st.divider()
 
 def plot_mini_histogram(df, column, title, color="#38BDF8"):
