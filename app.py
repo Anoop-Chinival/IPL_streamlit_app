@@ -565,10 +565,10 @@ st.markdown(f"""
         .glass-header h1 {{
             margin: 0; font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 900; 
             background: linear-gradient(90deg, #FFFFFF, #94A3B8); -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; letter-spacing: -1px; line-height: 1.1;
+            -webkit-text-fill-color: transparent; letter-spacing: -1px; line-height: 1;
         }}
         .glass-header p {{
-            margin: 6px 0 0 0; color: #94A3B8; font-size: 1rem; font-family: 'Inter', sans-serif; line-height: 1.4;
+            margin: -2px 0 0 0; color: #94A3B8; font-size: 1rem; font-family: 'Inter', sans-serif; line-height: 1.4;
         }}
         @media (max-width: 768px) {{
             .glass-header {{
@@ -589,11 +589,11 @@ st.markdown(f"""
             display: flex;
             flex-direction: column;
             justify-content: center;
-            transform: translateY(-10px);
+            transform: translateY(-6px);
         }}
         @media (max-width: 768px) {{
             .header-text-block {{
-                transform: translateY(-5px);
+                transform: translateY(-3px);
             }}
         }}
     </style>
