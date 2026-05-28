@@ -382,9 +382,9 @@ elif page == "💡 Deep Insights":
     trophies = finals['winner'].value_counts().reset_index()
     trophies.columns = ['Team', 'Trophies']
     
-    team_total_runs = deliveries.groupby('batting_team')['total_runs'].sum().reset_index().sort_values(by='total_runs', ascending=False).head(10)
+    team_total_runs = deliveries.groupby('batting_team')['total_runs'].sum().reset_index().sort_values(by='total_runs', ascending=False)
     team_wickets_df = deliveries[~deliveries['dismissal_kind'].isin(['retired hurt', 'retired out']) & deliveries['dismissal_kind'].notna()]
-    team_total_wickets = team_wickets_df.groupby('bowling_team')['dismissal_kind'].count().reset_index().rename(columns={'dismissal_kind':'wickets'}).sort_values(by='wickets', ascending=False).head(10)
+    team_total_wickets = team_wickets_df.groupby('bowling_team')['dismissal_kind'].count().reset_index().rename(columns={'dismissal_kind':'wickets'}).sort_values(by='wickets', ascending=False)
     
     over_runs = deliveries.groupby(['matchId', 'inning', 'over', 'batting_team'])['total_runs'].sum().reset_index()
     over_runs['over'] = over_runs['over'] + 1
@@ -478,10 +478,10 @@ elif page == "💡 Deep Insights":
         st.plotly_chart(apply_premium_layout(fig11), use_container_width=True)
     with col8:
         st.markdown("### Most Matches Won")
-        fig3 = px.bar(team_wins.head(10).sort_values(by='Wins', ascending=True), x='Wins', y='Team', orientation='h', text='Wins', template=CHART_THEME, color='Wins', color_continuous_scale='Plasma')
+        fig3 = px.bar(team_wins.sort_values(by='Wins', ascending=True), x='Wins', y='Team', orientation='h', text='Wins', template=CHART_THEME, color='Wins', color_continuous_scale='Plasma')
         fig3.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
         fig3.update_layout(coloraxis_showscale=False)
-        st.plotly_chart(apply_premium_layout(fig3), use_container_width=True)
+        st.plotly_chart(apply_premium_layout(fig3, height=450), use_container_width=True)
         
     col9, col10 = st.columns(2)
     with col9:
@@ -489,13 +489,13 @@ elif page == "💡 Deep Insights":
         fig12 = px.bar(team_total_runs, x='total_runs', y='batting_team', orientation='h', text='total_runs', template=CHART_THEME, color='total_runs', color_continuous_scale='Sunsetdark')
         fig12.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
         fig12.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
-        st.plotly_chart(apply_premium_layout(fig12), use_container_width=True)
+        st.plotly_chart(apply_premium_layout(fig12, height=450), use_container_width=True)
     with col10:
         st.markdown("### Total Wickets Taken by Franchise")
         fig_tw = px.bar(team_total_wickets, x='wickets', y='bowling_team', orientation='h', text='wickets', template=CHART_THEME, color='wickets', color_continuous_scale='Teal')
         fig_tw.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
         fig_tw.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
-        st.plotly_chart(apply_premium_layout(fig_tw), use_container_width=True)
+        st.plotly_chart(apply_premium_layout(fig_tw, height=450), use_container_width=True)
         
     col11, col12 = st.columns(2)
     with col11:
