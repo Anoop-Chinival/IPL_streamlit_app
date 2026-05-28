@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import os
+from base64_logo import LOGO_B64
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -93,75 +94,99 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Logo Styling */
-    [data-testid="stImage"] img {
+    /* Header UI */
+    .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+        background: rgba(15, 23, 42, 0.4);
+        padding: 25px 35px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        margin: 0 auto 30px auto;
+        max-width: 650px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .header-logo {
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        padding: 8px;
         background: #ffffff;
+        padding: 5px;
         box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), inset 0 0 10px rgba(0,0,0,0.1);
         border: 2px solid #38BDF8;
-        width: 140px !important;
-        height: 140px !important;
         object-fit: contain;
-        display: block;
-        margin: 0 auto 1.5rem auto;
+        flex-shrink: 0;
     }
-    
-    /* Sidebar Title & Desc */
-    .sidebar-title {
+    .header-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+    .header-title {
         font-family: 'Outfit', sans-serif;
-        font-size: 2.2rem;
+        font-size: 2.5rem;
         font-weight: 900;
         color: #F8FAFC;
-        text-align: center;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        line-height: 1.1;
+        letter-spacing: -0.5px;
     }
-    .sidebar-desc {
+    .header-desc {
         font-family: 'Inter', sans-serif;
-        font-size: 0.95rem;
+        font-size: 1rem;
         color: #94A3B8;
-        text-align: center;
         line-height: 1.4;
-        margin-bottom: 20px;
     }
     
-    /* Radio Buttons / Navigation */
+    /* Segmented Control Navigation */
     .stRadio [role=radiogroup] {
         display: flex;
         flex-direction: row;
         justify-content: center;
-        flex-wrap: wrap;
-        gap: 20px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 30px;
+        padding: 6px;
+        width: fit-content;
+        margin: 0 auto;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
     }
     .stRadio [role=radiogroup] label > div:first-child {
         display: none !important;
     }
     .stRadio [role=radiogroup] label {
-        background: rgba(15, 23, 42, 0.6);
-        padding: 12px 40px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        margin: 0;
+        background: transparent !important;
+        border: none !important;
+        padding: 12px 35px !important;
+        border-radius: 25px !important;
+        margin: 0 !important;
         transition: all 0.3s ease;
         cursor: pointer;
         text-align: center;
     }
     .stRadio [role=radiogroup] label:hover {
-        background: rgba(30, 41, 59, 0.8);
-        border-color: rgba(56, 189, 248, 0.4);
-        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.05) !important;
+        transform: none !important;
     }
     .stRadio [role=radiogroup] label:has(input:checked) {
-        background: linear-gradient(180deg, rgba(56, 189, 248, 0.15) 0%, rgba(129, 140, 248, 0.05) 100%);
-        border-bottom: 4px solid #38BDF8;
-        border-color: rgba(56, 189, 248, 0.3);
+        background: linear-gradient(135deg, #38BDF8 0%, #818CF8 100%) !important;
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4) !important;
+        border: none !important;
     }
     .stRadio [role=radiogroup] label p {
         font-family: 'Outfit', sans-serif !important;
         font-size: 1.15rem !important;
-        font-weight: 600 !important;
-        color: #F8FAFC !important;
+        font-weight: 700 !important;
+        color: #94A3B8 !important;
+        margin: 0 !important;
+    }
+    .stRadio [role=radiogroup] label:has(input:checked) p {
+        color: #ffffff !important;
     }
     
     /* Metrics */
@@ -290,11 +315,16 @@ def apply_premium_layout(fig, height=350, show_x=False):
 CHART_THEME = "plotly_dark"
 
 # --- Top Navigation ---
-col_nav1, col_nav2, col_nav3 = st.columns([1, 2, 1])
-with col_nav2:
-    st.image("IPL_Logo.png")
-    st.markdown('<div class="sidebar-title">IPL Analytics</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>', unsafe_allow_html=True)
+header_html = f"""
+<div class="app-header">
+    <img src="data:image/png;base64,{{LOGO_B64}}" class="header-logo">
+    <div class="header-text">
+        <div class="header-title">IPL Analytics</div>
+        <div class="header-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>
+    </div>
+</div>
+"""
+st.markdown(header_html, unsafe_allow_html=True)
 
 st.write("")
 page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
