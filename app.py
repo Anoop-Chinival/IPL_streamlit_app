@@ -85,14 +85,16 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Sidebar Styling */
+    /* Sidebar / Hamburger Hiding */
+    [data-testid="collapsedControl"] {
+        display: none !important;
+    }
     [data-testid="stSidebar"] {
-        background-color: #020617;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        display: none !important;
     }
     
     /* Logo Styling */
-    [data-testid="stSidebar"] img {
+    [data-testid="stImage"] img {
         border-radius: 50%;
         padding: 8px;
         background: #ffffff;
@@ -102,7 +104,7 @@ st.markdown("""
         height: 140px !important;
         object-fit: contain;
         display: block;
-        margin: 0 auto 2rem auto;
+        margin: 0 auto 1.5rem auto;
     }
     
     /* Sidebar Title & Desc */
@@ -125,27 +127,34 @@ st.markdown("""
     }
     
     /* Radio Buttons / Navigation */
+    .stRadio [role=radiogroup] {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
     .stRadio [role=radiogroup] label > div:first-child {
         display: none !important;
     }
     .stRadio [role=radiogroup] label {
         background: rgba(15, 23, 42, 0.6);
-        padding: 12px 20px;
+        padding: 12px 40px;
         border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.05);
-        margin-bottom: 8px;
+        margin: 0;
         transition: all 0.3s ease;
         cursor: pointer;
-        width: 100%;
+        text-align: center;
     }
     .stRadio [role=radiogroup] label:hover {
         background: rgba(30, 41, 59, 0.8);
         border-color: rgba(56, 189, 248, 0.4);
-        transform: translateX(4px);
+        transform: translateY(-2px);
     }
     .stRadio [role=radiogroup] label:has(input:checked) {
-        background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, rgba(129, 140, 248, 0.05) 100%);
-        border-left: 4px solid #38BDF8;
+        background: linear-gradient(180deg, rgba(56, 189, 248, 0.15) 0%, rgba(129, 140, 248, 0.05) 100%);
+        border-bottom: 4px solid #38BDF8;
         border-color: rgba(56, 189, 248, 0.3);
     }
     .stRadio [role=radiogroup] label p {
@@ -280,13 +289,16 @@ def apply_premium_layout(fig, height=350, show_x=False):
 
 CHART_THEME = "plotly_dark"
 
-# --- Sidebar Navigation ---
-with st.sidebar:
+# --- Top Navigation ---
+col_nav1, col_nav2, col_nav3 = st.columns([1, 2, 1])
+with col_nav2:
     st.image("IPL_Logo.png")
     st.markdown('<div class="sidebar-title">IPL Analytics</div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-desc">Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</div>', unsafe_allow_html=True)
-    st.write("")
-    page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], label_visibility="collapsed")
+
+st.write("")
+page = st.radio("Navigation", ["Data Explorer", "Deep Insights"], horizontal=True, label_visibility="collapsed")
+st.divider()
 
 def plot_mini_histogram(df, column, title, color="#38BDF8"):
     counts = df[column].value_counts().reset_index()
