@@ -848,13 +848,16 @@ elif page == "Player Comparison":
                 pdf = deliveries[deliveries['bowler'] == player]
                 if pdf.empty: continue
                 
-                matches = pdf['matchId'].nunique()
+                wides = pdf['isWide'].fillna(0)
+                noballs = pdf['isNoBall'].fillna(0)
                 
-                runs_conceded = int(pdf['batsman_runs'].sum() + pdf['isWide'].sum() + pdf['isNoBall'].sum())
+                runs_conceded = int(pdf['batsman_runs'].sum() + wides.sum() + noballs.sum())
                 
-                valid_balls = len(pdf[(pdf['isWide'] == 0) & (pdf['isNoBall'] == 0)])
-                overs = valid_balls / 6.0
-                economy = round(runs_conceded / overs, 2) if overs > 0 else 0
+                valid_balls = len(pdf[(wides == 0) & (noballs == 0)])
+                overs_bowled = round(valid_balls / 6.0, 1)
+                exact_overs = valid_balls / 6.0
+                
+                economy = round(runs_conceded / exact_overs, 2) if exact_overs > 0 else 0
                 
                 bowler_wickets = pdf[pdf['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket'])]
                 wickets = len(bowler_wickets)
@@ -864,7 +867,7 @@ elif page == "Player Comparison":
                 
                 bowlers_stats.append({
                     "Player": player,
-                    "Innings": matches,
+                    "Overs Bowled": overs_bowled,
                     "Wickets": wickets,
                     "Economy": economy,
                     "Bowling Average": avg,
