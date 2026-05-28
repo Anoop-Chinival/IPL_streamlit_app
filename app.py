@@ -82,6 +82,11 @@ st.markdown("""
         border: 1px solid rgba(56, 189, 248, 0.3);
     }
     
+    /* Hide Plotly Modebar and Disable Interaction UI */
+    .modebar-container, .modebar-group, .modebar {
+        display: none !important;
+    }
+    
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
         background-color: #020617;
@@ -270,6 +275,7 @@ def apply_premium_layout(fig, height=350, show_x=False):
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=show_x, title=""),
         yaxis=dict(showgrid=False, zeroline=False, title="", tickfont=dict(color='#E2E8F0', size=13)),
         hovermode='closest',
+        dragmode=False,
         font=dict(family="Inter, sans-serif", color="#94A3B8")
     )
     fig.update_traces(width=0.55, cliponaxis=False)
