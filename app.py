@@ -81,6 +81,47 @@ def map_player_names(df, columns):
             df[col] = df[col].replace(PLAYER_MAPPING)
     return df
 
+TEAM_MAPPING = {
+    "Delhi Daredevils": "Delhi Capitals",
+    "Kings XI Punjab": "Punjab Kings",
+    "Rising Pune Supergiants": "Rising Pune Supergiant",
+    "Royal Challengers Bangalore": "Royal Challengers Bengaluru"
+}
+
+VENUE_MAPPING = {
+    "Wankhede Stadium, Mumbai": "Wankhede Stadium",
+    "M Chinnaswamy Stadium, Bengaluru": "M Chinnaswamy Stadium",
+    "MA Chidambaram Stadium, Chepauk, Chennai": "MA Chidambaram Stadium",
+    "MA Chidambaram Stadium, Chepauk": "MA Chidambaram Stadium",
+    "Eden Gardens, Kolkata": "Eden Gardens",
+    "Feroz Shah Kotla": "Arun Jaitley Stadium",
+    "Arun Jaitley Stadium, Delhi": "Arun Jaitley Stadium",
+    "Rajiv Gandhi International Stadium, Uppal": "Rajiv Gandhi International Stadium",
+    "Rajiv Gandhi International Stadium, Uppal, Hyderabad": "Rajiv Gandhi International Stadium",
+    "Punjab Cricket Association Stadium, Mohali": "Punjab Cricket Association IS Bindra Stadium",
+    "Punjab Cricket Association IS Bindra Stadium, Mohali": "Punjab Cricket Association IS Bindra Stadium",
+    "Sardar Patel Stadium, Motera": "Narendra Modi Stadium",
+    "Narendra Modi Stadium, Ahmedabad": "Narendra Modi Stadium",
+    "Dr DY Patil Sports Academy, Mumbai": "Dr DY Patil Sports Academy",
+    "Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow": "Ekana Cricket Stadium",
+    "Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium": "Ekana Cricket Stadium",
+    "Sawai Mansingh Stadium, Jaipur": "Sawai Mansingh Stadium",
+    "Maharashtra Cricket Association Stadium, Pune": "Maharashtra Cricket Association Stadium",
+    "Zayed Cricket Stadium, Abu Dhabi": "Sheikh Zayed Stadium"
+}
+
+def map_team_names(df, columns):
+    for col in columns:
+        if col in df.columns:
+            df[col] = df[col].replace(TEAM_MAPPING)
+    return df
+
+def map_venue_names(df, columns):
+    for col in columns:
+        if col in df.columns:
+            df[col] = df[col].replace(VENUE_MAPPING)
+    return df
+
 # --- Data Loading ---
 @st.cache_data
 def load_data():
@@ -92,6 +133,11 @@ def load_data():
     
     matches_df = map_player_names(matches_df, ['player_of_match'])
     deliveries_df = map_player_names(deliveries_df, ['batsman', 'bowler', 'non_striker', 'player_dismissed'])
+    
+    matches_df = map_team_names(matches_df, ['team1', 'team2', 'toss_winner', 'winner'])
+    deliveries_df = map_team_names(deliveries_df, ['batting_team', 'bowling_team'])
+    
+    matches_df = map_venue_names(matches_df, ['venue'])
     
     return matches_df, deliveries_df
 
@@ -168,6 +214,8 @@ elif page == "💡 Deep Insights":
     # ---------------------------------------------------------
     # COMPUTATIONS
     # ---------------------------------------------------------
+    deliveries['total_runs'] = deliveries['batsman_runs'] + deliveries['extras']
+    
     # Batsmen
     top_run_scorers = deliveries.groupby('batsman')['batsman_runs'].sum().reset_index().sort_values(by='batsman_runs', ascending=False).head(10)
     sixes = deliveries[deliveries['batsman_runs'] == 6].groupby('batsman').size().reset_index(name='count').sort_values(by='count', ascending=False).head(10)
@@ -184,8 +232,14 @@ elif page == "💡 Deep Insights":
     deliveries['isWide'] = deliveries['isWide'].fillna(0)
     deliveries['isNoBall'] = deliveries['isNoBall'].fillna(0)
     deliveries['bowler_runs'] = deliveries['batsman_runs'] + deliveries['isWide'] + deliveries['isNoBall']
-    overs = deliveries.groupby(['matchId', 'inning', 'over', 'bowler'])['bowler_runs'].sum().reset_index()
-    maidens = overs[overs['bowler_runs'] == 0]
+    deliveries['isLegal'] = (deliveries['isWide'] == 0) & (deliveries['isNoBall'] == 0)
+    
+    overs = deliveries.groupby(['matchId', 'inning', 'over', 'bowler']).agg(
+        bowler_runs=('bowler_runs', 'sum'),
+        legal_balls=('isLegal', 'sum')
+    ).reset_index()
+    
+    maidens = overs[(overs['bowler_runs'] == 0) & (overs['legal_balls'] == 6)]
     top_maidens = maidens['bowler'].value_counts().reset_index().head(10)
     top_maidens.columns = ['Bowler', 'Maiden Overs']
     
@@ -199,23 +253,26 @@ elif page == "💡 Deep Insights":
     trophies = finals['winner'].value_counts().reset_index()
     trophies.columns = ['Team', 'Trophies']
     
-    team_total_runs = deliveries.groupby('batting_team')['batsman_runs'].sum().reset_index().sort_values(by='batsman_runs', ascending=False).head(10)
-    team_total_wickets = wickets_df.groupby('bowling_team')['dismissal_kind'].count().reset_index().rename(columns={'dismissal_kind':'wickets'}).sort_values(by='wickets', ascending=False).head(10)
+    team_total_runs = deliveries.groupby('batting_team')['total_runs'].sum().reset_index().sort_values(by='total_runs', ascending=False).head(10)
+    team_wickets_df = deliveries[~deliveries['dismissal_kind'].isin(['retired hurt', 'retired out']) & deliveries['dismissal_kind'].notna()]
+    team_total_wickets = team_wickets_df.groupby('bowling_team')['dismissal_kind'].count().reset_index().rename(columns={'dismissal_kind':'wickets'}).sort_values(by='wickets', ascending=False).head(10)
     
-    over_runs = deliveries.groupby(['matchId', 'inning', 'over', 'batting_team'])['batsman_runs'].sum().reset_index()
+    over_runs = deliveries.groupby(['matchId', 'inning', 'over', 'batting_team'])['total_runs'].sum().reset_index()
     over_runs['over'] = over_runs['over'] + 1
-    highest_over = over_runs.sort_values(by='batsman_runs', ascending=False).head(10)
+    highest_over = over_runs.sort_values(by='total_runs', ascending=False).head(10)
     
-    toss_impact = (matches['toss_winner'] == matches['winner']).value_counts().reset_index()
+    valid_matches = matches.dropna(subset=['winner'])
+    toss_impact = (valid_matches['toss_winner'] == valid_matches['winner']).value_counts().reset_index()
     toss_impact.columns = ['Won Match after Winning Toss', 'Count']
     toss_impact['Won Match after Winning Toss'] = toss_impact['Won Match after Winning Toss'].map({True: 'Yes', False: 'No'})
     
-    runs_per_season = deliveries.merge(matches[['matchId', 'season']], on='matchId', how='left').groupby(['season', 'matchId'])['batsman_runs'].sum().reset_index()
-    avg_runs_season = runs_per_season.groupby('season')['batsman_runs'].mean().reset_index()
+    runs_per_season = deliveries.merge(matches[['matchId', 'season']], on='matchId', how='left').groupby(['season', 'matchId'])['total_runs'].sum().reset_index()
+    avg_runs_season = runs_per_season.groupby('season')['total_runs'].mean().reset_index()
     
-    runs_by_over = deliveries.groupby('over')['batsman_runs'].mean().reset_index()
+    over_totals = deliveries.groupby(['matchId', 'inning', 'over'])['total_runs'].sum().reset_index()
+    runs_by_over = over_totals.groupby('over')['total_runs'].mean().reset_index()
+    runs_by_over.columns = ['over', 'Expected Runs per Over']
     runs_by_over['over'] = runs_by_over['over'] + 1
-    runs_by_over['Expected Runs per Over'] = runs_by_over['batsman_runs'] * 6
     
     # General Records
     pom_count = matches['player_of_match'].value_counts().reset_index().head(10)
@@ -300,7 +357,7 @@ elif page == "💡 Deep Insights":
     col9, col10 = st.columns(2)
     with col9:
         st.markdown("### Total Runs Scored by Franchise")
-        fig12 = px.bar(team_total_runs, x='batsman_runs', y='batting_team', orientation='h', text='batsman_runs', template=CHART_THEME)
+        fig12 = px.bar(team_total_runs, x='total_runs', y='batting_team', orientation='h', text='total_runs', template=CHART_THEME)
         fig12.update_traces(marker_color=PRIMARY_COLOR, textposition='inside')
         fig12.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="Total Runs", yaxis_title="")
         st.plotly_chart(fig12, use_container_width=True)
@@ -314,7 +371,7 @@ elif page == "💡 Deep Insights":
     col11, col12 = st.columns(2)
     with col11:
         st.markdown("### Average Runs Per Match Across Seasons")
-        fig5 = px.line(avg_runs_season, x='season', y='batsman_runs', markers=True, template=CHART_THEME)
+        fig5 = px.line(avg_runs_season, x='season', y='total_runs', markers=True, template=CHART_THEME)
         fig5.update_traces(line_color=PRIMARY_COLOR, line_width=4, marker=dict(size=10, color=SECONDARY_COLOR, line=dict(width=2, color='#0F172A')))
         fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig5, use_container_width=True)
@@ -337,7 +394,7 @@ elif page == "💡 Deep Insights":
         st.markdown("### Highest Run Score in a Single Over")
         fig16 = go.Figure(data=[go.Table(
             header=dict(values=['<b>Team</b>', '<b>Over No.</b>', '<b>Runs Scored</b>'], fill_color='#1E293B', align='left', font=dict(color='white', size=14)),
-            cells=dict(values=[highest_over.batting_team, highest_over.over, highest_over.batsman_runs], fill_color='#0F172A', align='left', font=dict(color='#E2E8F0', size=13), height=30))
+            cells=dict(values=[highest_over.batting_team, highest_over.over, highest_over.total_runs], fill_color='#0F172A', align='left', font=dict(color='#E2E8F0', size=13), height=30))
         ])
         fig16.update_layout(margin=dict(l=0, r=0, t=20, b=0), height=350, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig16, use_container_width=True)
