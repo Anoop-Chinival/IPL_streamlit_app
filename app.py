@@ -585,10 +585,15 @@ st.markdown(f"""
                 font-size: 0.8rem;
             }}
         }}
+        .header-text-block {{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }}
     </style>
     <div class="glass-header">
         {logo_html}
-        <div>
+        <div class="header-text-block">
             <h1>IPL Analytics</h1>
             <p>Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</p>
         </div>
