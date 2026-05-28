@@ -823,21 +823,21 @@ elif page == "Player Comparison":
                 st.dataframe(comp_df, use_container_width=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
-                chart_height = max(200, len(comp_df) * 35 + 100)
+                chart_height = max(130, len(comp_df) * 22 + 80)
                 col1, col2 = st.columns(2)
                 
                 with col1:
                     st.markdown("### TOTAL RUNS COMPARISON")
                     fig_r = px.bar(comp_df, x="Runs", y="Player", orientation='h', text="Runs", color="Runs", template=CHART_THEME, color_continuous_scale='Sunsetdark')
                     fig_r.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_r.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.3)
+                    fig_r.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_r, height=chart_height), use_container_width=True)
                 
                 with col2:
                     st.markdown("### BATTING AVERAGE COMPARISON")
                     fig_a = px.bar(comp_df, x="Average", y="Player", orientation='h', text="Average", color="Average", template=CHART_THEME, color_continuous_scale='Purp')
                     fig_a.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_a.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.3)
+                    fig_a.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_a, height=chart_height), use_container_width=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
@@ -847,7 +847,7 @@ elif page == "Player Comparison":
                     st.markdown("### STRIKE RATE COMPARISON")
                     fig_sr = px.bar(comp_df, x="Strike Rate", y="Player", orientation='h', text="Strike Rate", color="Strike Rate", template=CHART_THEME, color_continuous_scale='Plasma')
                     fig_sr.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_sr.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.3)
+                    fig_sr.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_sr, height=chart_height), use_container_width=True)
 
     with tab2:
@@ -902,21 +902,21 @@ elif page == "Player Comparison":
                 st.dataframe(comp_bdf, use_container_width=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
-                chart_height = max(200, len(comp_bdf) * 35 + 100)
+                chart_height = max(130, len(comp_bdf) * 22 + 80)
                 col1, col2 = st.columns(2)
                 
                 with col1:
                     st.markdown("### TOTAL WICKETS")
                     fig_w = px.bar(comp_bdf, x="Wickets", y="Player", orientation='h', text="Wickets", color="Wickets", template=CHART_THEME, color_continuous_scale='Sunsetdark')
                     fig_w.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_w.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.3)
+                    fig_w.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_w, height=chart_height), use_container_width=True)
                 
                 with col2:
                     st.markdown("### BEST BOWLING FIGURES")
                     fig_ba = px.bar(comp_bdf, x="Best Match Wickets", y="Player", orientation='h', text="Best", color="Best Match Wickets", template=CHART_THEME, color_continuous_scale='Purp')
                     fig_ba.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_ba.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.3)
+                    fig_ba.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_ba, height=chart_height), use_container_width=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
@@ -926,5 +926,5 @@ elif page == "Player Comparison":
                     st.markdown("### ECONOMY RATE (LOWER IS BETTER)")
                     fig_ec = px.bar(comp_bdf, x="Economy", y="Player", orientation='h', text="Economy", color="Economy", template=CHART_THEME, color_continuous_scale='Teal')
                     fig_ec.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_ec.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total descending'}, bargap=0.3)
+                    fig_ec.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total descending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_ec, height=chart_height), use_container_width=True)
