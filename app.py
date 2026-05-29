@@ -503,6 +503,8 @@ def load_data():
     
     matches_df = map_venue_names(matches_df, ['venue'])
     
+    deliveries_df = deliveries_df.merge(matches_df[['matchId', 'venue']], on='matchId', how='left')
+    
     return matches_df, deliveries_df
 
 matches, deliveries = load_data()
@@ -882,12 +884,25 @@ elif page == "Player Comparison":
     with tab1:
         st.markdown("### Compare Batsmen")
         all_batsmen = sorted(deliveries['batsman'].dropna().unique())
-        selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "Mahendra Singh Dhoni", "Rohit Sharma"])
+        all_venues = sorted(deliveries['venue'].dropna().unique())
+        all_bowlers = sorted(deliveries['bowler'].dropna().unique())
+        
+        col_b1, col_b2, col_b3 = st.columns(3)
+        with col_b1:
+            selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "Mahendra Singh Dhoni", "Rohit Sharma"])
+        with col_b2:
+            selected_venue_b = st.selectbox("Select Stadium (Venue)", ["All Venues"] + list(all_venues), key="venue_bat")
+        with col_b3:
+            selected_bowler_b = st.selectbox("Against Bowler", ["All Bowlers"] + list(all_bowlers), key="bowler_bat")
         
         if len(selected_batsmen) > 0:
             batsmen_stats = []
             for player in selected_batsmen:
                 pdf = deliveries[deliveries['batsman'] == player]
+                if selected_venue_b != "All Venues":
+                    pdf = pdf[pdf['venue'] == selected_venue_b]
+                if selected_bowler_b != "All Bowlers":
+                    pdf = pdf[pdf['bowler'] == selected_bowler_b]
                 if pdf.empty: continue
                 runs = int(pdf['batsman_runs'].sum())
                 wides = pdf['isWide'].fillna(0)
@@ -951,12 +966,25 @@ elif page == "Player Comparison":
     with tab2:
         st.markdown("### Compare Bowlers")
         all_bowlers = sorted(deliveries['bowler'].dropna().unique())
-        selected_bowlers = st.multiselect("Select Bowlers to Compare", all_bowlers, default=["Lasith Malinga", "Jasprit Bumrah", "Rashid Khan"])
+        all_venues = sorted(deliveries['venue'].dropna().unique())
+        all_batsmen = sorted(deliveries['batsman'].dropna().unique())
+        
+        col_bw1, col_bw2, col_bw3 = st.columns(3)
+        with col_bw1:
+            selected_bowlers = st.multiselect("Select Bowlers to Compare", all_bowlers, default=["Lasith Malinga", "Jasprit Bumrah", "Rashid Khan"])
+        with col_bw2:
+            selected_venue_bw = st.selectbox("Select Stadium (Venue)", ["All Venues"] + list(all_venues), key="venue_bowl")
+        with col_bw3:
+            selected_batsman_bw = st.selectbox("Against Batsman", ["All Batsmen"] + list(all_batsmen), key="batsman_bowl")
         
         if len(selected_bowlers) > 0:
             bowlers_stats = []
             for player in selected_bowlers:
                 pdf = deliveries[deliveries['bowler'] == player]
+                if selected_venue_bw != "All Venues":
+                    pdf = pdf[pdf['venue'] == selected_venue_bw]
+                if selected_batsman_bw != "All Batsmen":
+                    pdf = pdf[pdf['batsman'] == selected_batsman_bw]
                 if pdf.empty: continue
                 
                 wides = pdf['isWide'].fillna(0)
