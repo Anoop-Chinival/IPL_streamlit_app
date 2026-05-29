@@ -909,7 +909,7 @@ elif page == "Player Comparison":
                 balls = len(pdf[wides == 0])
                 sr = round((runs / balls) * 100, 2) if balls > 0 else 0
                 
-                dismissals = deliveries[deliveries['player_dismissed'] == player]
+                dismissals = pdf[pdf['player_dismissed'] == player]
                 outs = len(dismissals)
                 avg = round(runs / outs, 2) if outs > 0 else runs
                 
@@ -924,6 +924,8 @@ elif page == "Player Comparison":
                     "Player": player,
                     "Innings": matches,
                     "Runs": runs,
+                    "Balls Faced": balls,
+                    "Times Dismissed": outs,
                     "Average": avg,
                     "Strike Rate": sr,
                     "Highest Score": highest,
