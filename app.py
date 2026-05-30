@@ -503,7 +503,8 @@ def load_data():
     
     matches_df = map_venue_names(matches_df, ['venue'])
     
-    deliveries_df = deliveries_df.merge(matches_df[['matchId', 'venue']], on='matchId', how='left')
+    matches_df['season_year'] = matches_df['season'].astype(str).replace({'2007/08': '2008', '2009/10': '2010', '2020/21': '2020'})
+    deliveries_df = deliveries_df.merge(matches_df[['matchId', 'venue', 'season_year']], on='matchId', how='left')
     
     return matches_df, deliveries_df
 
@@ -886,14 +887,17 @@ elif page == "Player Comparison":
         all_batsmen = sorted(deliveries['batsman'].dropna().unique())
         all_venues = sorted(deliveries['venue'].dropna().unique())
         all_bowlers = sorted(deliveries['bowler'].dropna().unique())
+        all_seasons = sorted(deliveries['season_year'].dropna().unique())
         
-        col_b1, col_b2, col_b3 = st.columns(3)
+        col_b1, col_b2, col_b3, col_b4 = st.columns(4)
         with col_b1:
             selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "Mahendra Singh Dhoni", "Rohit Sharma"])
         with col_b2:
             selected_venue_b = st.selectbox("Select Stadium (Venue)", ["All Venues"] + list(all_venues), key="venue_bat")
         with col_b3:
             selected_bowler_b = st.selectbox("Against Bowler", ["All Bowlers"] + list(all_bowlers), key="bowler_bat")
+        with col_b4:
+            selected_season_b = st.selectbox("Select Season", ["All Seasons"] + list(all_seasons), key="season_bat")
         
         if len(selected_batsmen) > 0:
             batsmen_stats = []
@@ -903,6 +907,8 @@ elif page == "Player Comparison":
                     pdf = pdf[pdf['venue'] == selected_venue_b]
                 if selected_bowler_b != "All Bowlers":
                     pdf = pdf[pdf['bowler'] == selected_bowler_b]
+                if selected_season_b != "All Seasons":
+                    pdf = pdf[pdf['season_year'] == selected_season_b]
                 if pdf.empty: continue
                 runs = int(pdf['batsman_runs'].sum())
                 wides = pdf['isWide'].fillna(0)
@@ -920,18 +926,22 @@ elif page == "Player Comparison":
                 fours = len(pdf[pdf['batsman_runs'] == 4])
                 sixes = len(pdf[pdf['batsman_runs'] == 6])
                 
-                batsmen_stats.append({
+                stat_dict = {
                     "Player": player,
                     "Innings": matches,
                     "Runs": runs,
                     "Balls Faced": balls,
-                    "Times Dismissed": outs,
-                    "Average": avg,
-                    "Strike Rate": sr,
-                    "Highest Score": highest,
-                    "4s": fours,
-                    "6s": sixes
-                })
+                }
+                if selected_bowler_b == "All Bowlers":
+                    stat_dict["Average"] = avg
+                
+                stat_dict["Strike Rate"] = sr
+                stat_dict["Highest Score"] = highest
+                stat_dict["4s"] = fours
+                stat_dict["6s"] = sixes
+                stat_dict["Times Dismissed"] = outs
+                
+                batsmen_stats.append(stat_dict)
             
             if batsmen_stats:
                 comp_df = pd.DataFrame(batsmen_stats)
@@ -949,11 +959,12 @@ elif page == "Player Comparison":
                     st.plotly_chart(apply_premium_layout(fig_r, height=chart_height), use_container_width=True)
                 
                 with col2:
-                    st.markdown("### BATTING AVERAGE COMPARISON")
-                    fig_a = px.bar(comp_df, x="Average", y="Player", orientation='h', text="Average", color="Average", template=CHART_THEME, color_continuous_scale='Purp')
-                    fig_a.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_a.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
-                    st.plotly_chart(apply_premium_layout(fig_a, height=chart_height), use_container_width=True)
+                    if "Average" in comp_df.columns:
+                        st.markdown("### BATTING AVERAGE COMPARISON")
+                        fig_a = px.bar(comp_df, x="Average", y="Player", orientation='h', text="Average", color="Average", template=CHART_THEME, color_continuous_scale='Purp')
+                        fig_a.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+                        fig_a.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
+                        st.plotly_chart(apply_premium_layout(fig_a, height=chart_height), use_container_width=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 col3, col4 = st.columns(2)
@@ -970,14 +981,17 @@ elif page == "Player Comparison":
         all_bowlers = sorted(deliveries['bowler'].dropna().unique())
         all_venues = sorted(deliveries['venue'].dropna().unique())
         all_batsmen = sorted(deliveries['batsman'].dropna().unique())
+        all_seasons = sorted(deliveries['season_year'].dropna().unique())
         
-        col_bw1, col_bw2, col_bw3 = st.columns(3)
+        col_bw1, col_bw2, col_bw3, col_bw4 = st.columns(4)
         with col_bw1:
             selected_bowlers = st.multiselect("Select Bowlers to Compare", all_bowlers, default=["Lasith Malinga", "Jasprit Bumrah", "Rashid Khan"])
         with col_bw2:
             selected_venue_bw = st.selectbox("Select Stadium (Venue)", ["All Venues"] + list(all_venues), key="venue_bowl")
         with col_bw3:
             selected_batsman_bw = st.selectbox("Against Batsman", ["All Batsmen"] + list(all_batsmen), key="batsman_bowl")
+        with col_bw4:
+            selected_season_bw = st.selectbox("Select Season", ["All Seasons"] + list(all_seasons), key="season_bowl")
         
         if len(selected_bowlers) > 0:
             bowlers_stats = []
@@ -987,6 +1001,8 @@ elif page == "Player Comparison":
                     pdf = pdf[pdf['venue'] == selected_venue_bw]
                 if selected_batsman_bw != "All Batsmen":
                     pdf = pdf[pdf['batsman'] == selected_batsman_bw]
+                if selected_season_bw != "All Seasons":
+                    pdf = pdf[pdf['season_year'] == selected_season_bw]
                 if pdf.empty: continue
                 
                 wides = pdf['isWide'].fillna(0)
