@@ -739,20 +739,22 @@ elif page == "Deep Insights":
     
     # Season Awards Computations
     season_runs = deliveries.groupby(['season_year', 'batsman'])['batsman_runs'].sum().reset_index()
-    orange_caps_by_year = season_runs.loc[season_runs.groupby('season_year')['batsman_runs'].idxmax()]
-    orange_caps = orange_caps_by_year.groupby('batsman').agg(
-        Times_Won=('season_year', 'count'),
-        Years=('season_year', lambda x: ', '.join(sorted(x)))
+    orange_caps_base = season_runs.loc[season_runs.groupby('season_year')['batsman_runs'].idxmax()].reset_index(drop=True)
+    orange_caps_base.columns = ['Year', 'Player', 'Runs']
+    orange_caps_grouped = orange_caps_base.groupby('Player').agg(
+        Times_Won=('Year', 'count'),
+        Years=('Year', lambda x: ', '.join(sorted(x)))
     ).reset_index().sort_values(by='Times_Won', ascending=False)
-    orange_caps.columns = ['Player', 'Times Won', 'Years']
+    orange_caps_grouped.columns = ['Player', 'Times Won', 'Years']
     
     season_wickets = wickets_df.groupby(['season_year', 'bowler'])['dismissal_kind'].count().reset_index()
-    purple_caps_by_year = season_wickets.loc[season_wickets.groupby('season_year')['dismissal_kind'].idxmax()]
-    purple_caps = purple_caps_by_year.groupby('bowler').agg(
-        Times_Won=('season_year', 'count'),
-        Years=('season_year', lambda x: ', '.join(sorted(x)))
+    purple_caps_base = season_wickets.loc[season_wickets.groupby('season_year')['dismissal_kind'].idxmax()].reset_index(drop=True)
+    purple_caps_base.columns = ['Year', 'Player', 'Wickets']
+    purple_caps_grouped = purple_caps_base.groupby('Player').agg(
+        Times_Won=('Year', 'count'),
+        Years=('Year', lambda x: ', '.join(sorted(x)))
     ).reset_index().sort_values(by='Times_Won', ascending=False)
-    purple_caps.columns = ['Player', 'Times Won', 'Years']
+    purple_caps_grouped.columns = ['Player', 'Times Won', 'Years']
 
     # ---------------------------------------------------------
     # SEASON AWARDS
@@ -761,10 +763,27 @@ elif page == "Deep Insights":
     col_a1, col_a2 = st.columns(2)
     with col_a1:
         st.markdown("### Orange Cap Winners")
-        st.dataframe(orange_caps, use_container_width=True, hide_index=True)
+        orange_sort = st.selectbox("Sort Orange Caps By", ["Most Times Won", "Highest Runs", "Lowest Runs", "Recent Year"], key='orange_sort')
+        if orange_sort == "Most Times Won":
+            st.dataframe(orange_caps_grouped, use_container_width=True, hide_index=True)
+        elif orange_sort == "Highest Runs":
+            st.dataframe(orange_caps_base.sort_values(by='Runs', ascending=False), use_container_width=True, hide_index=True)
+        elif orange_sort == "Lowest Runs":
+            st.dataframe(orange_caps_base.sort_values(by='Runs', ascending=True), use_container_width=True, hide_index=True)
+        else:
+            st.dataframe(orange_caps_base.sort_values(by='Year', ascending=False), use_container_width=True, hide_index=True)
+            
     with col_a2:
         st.markdown("### Purple Cap Winners")
-        st.dataframe(purple_caps, use_container_width=True, hide_index=True)
+        purple_sort = st.selectbox("Sort Purple Caps By", ["Most Times Won", "Highest Wickets", "Lowest Wickets", "Recent Year"], key='purple_sort')
+        if purple_sort == "Most Times Won":
+            st.dataframe(purple_caps_grouped, use_container_width=True, hide_index=True)
+        elif purple_sort == "Highest Wickets":
+            st.dataframe(purple_caps_base.sort_values(by='Wickets', ascending=False), use_container_width=True, hide_index=True)
+        elif purple_sort == "Lowest Wickets":
+            st.dataframe(purple_caps_base.sort_values(by='Wickets', ascending=True), use_container_width=True, hide_index=True)
+        else:
+            st.dataframe(purple_caps_base.sort_values(by='Year', ascending=False), use_container_width=True, hide_index=True)
 
     # ---------------------------------------------------------
     # BATSMEN INSIGHTS
