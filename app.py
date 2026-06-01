@@ -975,6 +975,21 @@ elif page == "Player Comparison":
                     fig_sr.update_traces(hovertemplate='Runs: %{customdata[0]}<br>Balls Faced: %{customdata[1]}<br>Strike Rate: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                     fig_sr.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_sr, height=chart_height), use_container_width=True)
+                
+                st.markdown("<br><h3 class='group-header'>Top 10 Nemeses (Most Times Dismissed By)</h3>", unsafe_allow_html=True)
+                cols_nemesis = st.columns(len(selected_batsmen))
+                for idx, player in enumerate(selected_batsmen):
+                    with cols_nemesis[idx]:
+                        st.markdown(f"<div style='text-align: center; color: #38BDF8; font-weight: bold; margin-bottom: 10px;'>{player}</div>", unsafe_allow_html=True)
+                        player_dismissals = deliveries[deliveries['player_dismissed'] == player]
+                        if selected_venue_b != "All Venues":
+                            player_dismissals = player_dismissals[player_dismissals['venue'] == selected_venue_b]
+                        if selected_season_b != "All Seasons":
+                            player_dismissals = player_dismissals[player_dismissals['season_year'] == selected_season_b]
+                        
+                        top_bowlers = player_dismissals['bowler'].value_counts().head(10).reset_index()
+                        top_bowlers.columns = ['Bowler Name', 'Times Dismissed']
+                        st.dataframe(top_bowlers, use_container_width=True, hide_index=True)
 
     with tab2:
         st.markdown("### Compare Bowlers")
@@ -1066,3 +1081,18 @@ elif page == "Player Comparison":
                     fig_ec.update_traces(hovertemplate='Runs Conceded: %{customdata[0]}<br>Overs Bowled: %{customdata[1]}<br>Economy: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                     fig_ec.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total descending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_ec, height=chart_height), use_container_width=True)
+                
+                st.markdown("<br><h3 class='group-header'>Top 10 Bunnies (Most Times Dismissed)</h3>", unsafe_allow_html=True)
+                cols_bunny = st.columns(len(selected_bowlers))
+                for idx, player in enumerate(selected_bowlers):
+                    with cols_bunny[idx]:
+                        st.markdown(f"<div style='text-align: center; color: #38BDF8; font-weight: bold; margin-bottom: 10px;'>{player}</div>", unsafe_allow_html=True)
+                        player_wickets = deliveries[(deliveries['bowler'] == player) & (deliveries['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket']))]
+                        if selected_venue_bw != "All Venues":
+                            player_wickets = player_wickets[player_wickets['venue'] == selected_venue_bw]
+                        if selected_season_bw != "All Seasons":
+                            player_wickets = player_wickets[player_wickets['season_year'] == selected_season_bw]
+                        
+                        top_batsmen = player_wickets['player_dismissed'].value_counts().head(10).reset_index()
+                        top_batsmen.columns = ['Batsman Name', 'Times Dismissed']
+                        st.dataframe(top_batsmen, use_container_width=True, hide_index=True)
