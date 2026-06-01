@@ -981,25 +981,28 @@ elif page == "Player Comparison":
                 for idx, player in enumerate(selected_batsmen):
                     with cols_nemesis[idx]:
                         st.markdown(f"<div style='text-align: center; color: #38BDF8; font-weight: bold; margin-bottom: 10px;'>{player}</div>", unsafe_allow_html=True)
-                        player_dismissals = deliveries[deliveries['player_dismissed'] == player]
+                        player_dismissals = deliveries[(deliveries['player_dismissed'] == player) & (deliveries['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket']))]
                         if selected_venue_b != "All Venues":
                             player_dismissals = player_dismissals[player_dismissals['venue'] == selected_venue_b]
                         if selected_season_b != "All Seasons":
                             player_dismissals = player_dismissals[player_dismissals['season_year'] == selected_season_b]
                         
                         top_bowlers = player_dismissals['bowler'].value_counts().head(10).reset_index()
-                        top_bowlers.columns = ['Bowler Name', 'Times Dismissed']
+                        top_bowlers.columns = ['Bowler Name', 'outs']
                         
-                        balls_faced_list = []
-                        for b_name in top_bowlers['Bowler Name']:
+                        formatted_stats = []
+                        for b_name, outs in zip(top_bowlers['Bowler Name'], top_bowlers['outs']):
                             b_deliv = deliveries[(deliveries['batsman'] == player) & (deliveries['bowler'] == b_name)]
                             if selected_venue_b != "All Venues":
                                 b_deliv = b_deliv[b_deliv['venue'] == selected_venue_b]
                             if selected_season_b != "All Seasons":
                                 b_deliv = b_deliv[b_deliv['season_year'] == selected_season_b]
-                            balls_faced_list.append(len(b_deliv[b_deliv['isWide'].fillna(0) == 0]))
                             
-                        top_bowlers['Balls Faced'] = balls_faced_list
+                            matches_faced = b_deliv['matchId'].nunique()
+                            formatted_stats.append(f"{outs} / {matches_faced}")
+                            
+                        top_bowlers['Times Dismissed / Times Face-off'] = formatted_stats
+                        top_bowlers = top_bowlers[['Bowler Name', 'Times Dismissed / Times Face-off']]
                         st.dataframe(top_bowlers, use_container_width=True, hide_index=True)
 
     with tab2:
@@ -1105,16 +1108,19 @@ elif page == "Player Comparison":
                             player_wickets = player_wickets[player_wickets['season_year'] == selected_season_bw]
                         
                         top_batsmen = player_wickets['player_dismissed'].value_counts().head(10).reset_index()
-                        top_batsmen.columns = ['Batsman Name', 'Times Dismissed']
+                        top_batsmen.columns = ['Batsman Name', 'outs']
                         
-                        balls_bowled_list = []
-                        for bat_name in top_batsmen['Batsman Name']:
+                        formatted_stats = []
+                        for bat_name, outs in zip(top_batsmen['Batsman Name'], top_batsmen['outs']):
                             b_deliv = deliveries[(deliveries['bowler'] == player) & (deliveries['batsman'] == bat_name)]
                             if selected_venue_bw != "All Venues":
                                 b_deliv = b_deliv[b_deliv['venue'] == selected_venue_bw]
                             if selected_season_bw != "All Seasons":
                                 b_deliv = b_deliv[b_deliv['season_year'] == selected_season_bw]
-                            balls_bowled_list.append(len(b_deliv[b_deliv['isWide'].fillna(0) == 0]))
                             
-                        top_batsmen['Balls Bowled'] = balls_bowled_list
+                            matches_faced = b_deliv['matchId'].nunique()
+                            formatted_stats.append(f"{outs} / {matches_faced}")
+                            
+                        top_batsmen['Times Dismissed / Times Face-off'] = formatted_stats
+                        top_batsmen = top_batsmen[['Batsman Name', 'Times Dismissed / Times Face-off']]
                         st.dataframe(top_batsmen, use_container_width=True, hide_index=True)
