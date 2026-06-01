@@ -989,6 +989,17 @@ elif page == "Player Comparison":
                         
                         top_bowlers = player_dismissals['bowler'].value_counts().head(10).reset_index()
                         top_bowlers.columns = ['Bowler Name', 'Times Dismissed']
+                        
+                        balls_faced_list = []
+                        for b_name in top_bowlers['Bowler Name']:
+                            b_deliv = deliveries[(deliveries['batsman'] == player) & (deliveries['bowler'] == b_name)]
+                            if selected_venue_b != "All Venues":
+                                b_deliv = b_deliv[b_deliv['venue'] == selected_venue_b]
+                            if selected_season_b != "All Seasons":
+                                b_deliv = b_deliv[b_deliv['season_year'] == selected_season_b]
+                            balls_faced_list.append(len(b_deliv[b_deliv['isWide'].fillna(0) == 0]))
+                            
+                        top_bowlers['Balls Faced'] = balls_faced_list
                         st.dataframe(top_bowlers, use_container_width=True, hide_index=True)
 
     with tab2:
@@ -1095,4 +1106,15 @@ elif page == "Player Comparison":
                         
                         top_batsmen = player_wickets['player_dismissed'].value_counts().head(10).reset_index()
                         top_batsmen.columns = ['Batsman Name', 'Times Dismissed']
+                        
+                        balls_bowled_list = []
+                        for bat_name in top_batsmen['Batsman Name']:
+                            b_deliv = deliveries[(deliveries['bowler'] == player) & (deliveries['batsman'] == bat_name)]
+                            if selected_venue_bw != "All Venues":
+                                b_deliv = b_deliv[b_deliv['venue'] == selected_venue_bw]
+                            if selected_season_bw != "All Seasons":
+                                b_deliv = b_deliv[b_deliv['season_year'] == selected_season_bw]
+                            balls_bowled_list.append(len(b_deliv[b_deliv['isWide'].fillna(0) == 0]))
+                            
+                        top_batsmen['Balls Bowled'] = balls_bowled_list
                         st.dataframe(top_batsmen, use_container_width=True, hide_index=True)
