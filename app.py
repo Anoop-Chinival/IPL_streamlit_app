@@ -739,12 +739,20 @@ elif page == "Deep Insights":
     
     # Season Awards Computations
     season_runs = deliveries.groupby(['season_year', 'batsman'])['batsman_runs'].sum().reset_index()
-    orange_caps = season_runs.loc[season_runs.groupby('season_year')['batsman_runs'].idxmax()].sort_values(by='season_year', ascending=False).reset_index(drop=True)
-    orange_caps.columns = ['Year', 'Player', 'Runs']
+    orange_caps_by_year = season_runs.loc[season_runs.groupby('season_year')['batsman_runs'].idxmax()]
+    orange_caps = orange_caps_by_year.groupby('batsman').agg(
+        Times_Won=('season_year', 'count'),
+        Years=('season_year', lambda x: ', '.join(sorted(x)))
+    ).reset_index().sort_values(by='Times_Won', ascending=False)
+    orange_caps.columns = ['Player', 'Times Won', 'Years']
     
     season_wickets = wickets_df.groupby(['season_year', 'bowler'])['dismissal_kind'].count().reset_index()
-    purple_caps = season_wickets.loc[season_wickets.groupby('season_year')['dismissal_kind'].idxmax()].sort_values(by='season_year', ascending=False).reset_index(drop=True)
-    purple_caps.columns = ['Year', 'Player', 'Wickets']
+    purple_caps_by_year = season_wickets.loc[season_wickets.groupby('season_year')['dismissal_kind'].idxmax()]
+    purple_caps = purple_caps_by_year.groupby('bowler').agg(
+        Times_Won=('season_year', 'count'),
+        Years=('season_year', lambda x: ', '.join(sorted(x)))
+    ).reset_index().sort_values(by='Times_Won', ascending=False)
+    purple_caps.columns = ['Player', 'Times Won', 'Years']
 
     # ---------------------------------------------------------
     # SEASON AWARDS
