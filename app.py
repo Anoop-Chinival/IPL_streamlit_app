@@ -953,16 +953,16 @@ elif page == "Player Comparison":
                 
                 with col1:
                     st.markdown("### TOTAL RUNS COMPARISON")
-                    fig_r = px.bar(comp_df, x="Runs", y="Player", orientation='h', text="Runs", color="Runs", template=CHART_THEME, color_continuous_scale='Sunsetdark')
-                    fig_r.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+                    fig_r = px.bar(comp_df, x="Runs", y="Player", orientation='h', text="Runs", color="Runs", template=CHART_THEME, color_continuous_scale='Sunsetdark', hover_data=['Innings'])
+                    fig_r.update_traces(hovertemplate='Innings: %{customdata[0]}<br>Total Runs: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                     fig_r.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_r, height=chart_height), use_container_width=True)
                 
                 with col2:
                     if "Average" in comp_df.columns:
                         st.markdown("### BATTING AVERAGE COMPARISON")
-                        fig_a = px.bar(comp_df, x="Average", y="Player", orientation='h', text="Average", color="Average", template=CHART_THEME, color_continuous_scale='Purp')
-                        fig_a.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+                        fig_a = px.bar(comp_df, x="Average", y="Player", orientation='h', text="Average", color="Average", template=CHART_THEME, color_continuous_scale='Purp', hover_data=['Runs', 'Times Dismissed'])
+                        fig_a.update_traces(hovertemplate='Runs: %{customdata[0]}<br>Times Dismissed: %{customdata[1]}<br>Average: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                         fig_a.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                         st.plotly_chart(apply_premium_layout(fig_a, height=chart_height), use_container_width=True)
                 
@@ -971,8 +971,8 @@ elif page == "Player Comparison":
                 
                 with col3:
                     st.markdown("### STRIKE RATE COMPARISON")
-                    fig_sr = px.bar(comp_df, x="Strike Rate", y="Player", orientation='h', text="Strike Rate", color="Strike Rate", template=CHART_THEME, color_continuous_scale='Plasma')
-                    fig_sr.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+                    fig_sr = px.bar(comp_df, x="Strike Rate", y="Player", orientation='h', text="Strike Rate", color="Strike Rate", template=CHART_THEME, color_continuous_scale='Plasma', hover_data=['Runs', 'Balls Faced'])
+                    fig_sr.update_traces(hovertemplate='Runs: %{customdata[0]}<br>Balls Faced: %{customdata[1]}<br>Strike Rate: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                     fig_sr.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_sr, height=chart_height), use_container_width=True)
 
@@ -1038,7 +1038,8 @@ elif page == "Player Comparison":
                     "Economy": economy,
                     "Best": best_figure,
                     "Balls/Wicket": balls_per_wicket,
-                    "Best Match Wickets": best_w
+                    "Best Match Wickets": best_w,
+                    "Runs Conceded": runs_conceded
                 })
                 
             if bowlers_stats:
@@ -1051,24 +1052,17 @@ elif page == "Player Comparison":
                 
                 with col1:
                     st.markdown("### TOTAL WICKETS")
-                    fig_w = px.bar(comp_bdf, x="Wickets", y="Player", orientation='h', text="Wickets", color="Wickets", template=CHART_THEME, color_continuous_scale='Sunsetdark')
-                    fig_w.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+                    fig_w = px.bar(comp_bdf, x="Wickets", y="Player", orientation='h', text="Wickets", color="Wickets", template=CHART_THEME, color_continuous_scale='Sunsetdark', hover_data=['Overs Bowled'])
+                    fig_w.update_traces(hovertemplate='Overs Bowled: %{customdata[0]}<br>Total Wickets: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                     fig_w.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_w, height=chart_height), use_container_width=True)
-                
-                with col2:
-                    st.markdown("### BEST BOWLING FIGURES")
-                    fig_ba = px.bar(comp_bdf, x="Best Match Wickets", y="Player", orientation='h', text="Best", color="Best Match Wickets", template=CHART_THEME, color_continuous_scale='Purp')
-                    fig_ba.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
-                    fig_ba.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
-                    st.plotly_chart(apply_premium_layout(fig_ba, height=chart_height), use_container_width=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 col3, col4 = st.columns(2)
                 
                 with col3:
                     st.markdown("### ECONOMY RATE (LOWER IS BETTER)")
-                    fig_ec = px.bar(comp_bdf, x="Economy", y="Player", orientation='h', text="Economy", color="Economy", template=CHART_THEME, color_continuous_scale='Teal')
-                    fig_ec.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
+                    fig_ec = px.bar(comp_bdf, x="Economy", y="Player", orientation='h', text="Economy", color="Economy", template=CHART_THEME, color_continuous_scale='Teal', hover_data=['Runs Conceded', 'Overs Bowled'])
+                    fig_ec.update_traces(hovertemplate='Runs Conceded: %{customdata[0]}<br>Overs Bowled: %{customdata[1]}<br>Economy: %{x}<br>Player: %{y}<extra></extra>', textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
                     fig_ec.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total descending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_ec, height=chart_height), use_container_width=True)
