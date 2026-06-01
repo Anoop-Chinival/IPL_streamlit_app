@@ -757,35 +757,6 @@ elif page == "Deep Insights":
     purple_caps_grouped.columns = ['Player', 'Times Won', 'Years']
 
     # ---------------------------------------------------------
-    # SEASON AWARDS
-    # ---------------------------------------------------------
-    st.markdown('<h2 class="group-header">Season Awards</h2>', unsafe_allow_html=True)
-    col_a1, col_a2 = st.columns(2)
-    with col_a1:
-        st.markdown("### Orange Cap Winners")
-        orange_sort = st.selectbox("Sort Orange Caps By", ["Most Times Won", "Highest Runs", "Lowest Runs", "Recent Year"], key='orange_sort')
-        if orange_sort == "Most Times Won":
-            st.dataframe(orange_caps_grouped, use_container_width=True, hide_index=True)
-        elif orange_sort == "Highest Runs":
-            st.dataframe(orange_caps_base.sort_values(by='Runs', ascending=False), use_container_width=True, hide_index=True)
-        elif orange_sort == "Lowest Runs":
-            st.dataframe(orange_caps_base.sort_values(by='Runs', ascending=True), use_container_width=True, hide_index=True)
-        else:
-            st.dataframe(orange_caps_base.sort_values(by='Year', ascending=False), use_container_width=True, hide_index=True)
-            
-    with col_a2:
-        st.markdown("### Purple Cap Winners")
-        purple_sort = st.selectbox("Sort Purple Caps By", ["Most Times Won", "Highest Wickets", "Lowest Wickets", "Recent Year"], key='purple_sort')
-        if purple_sort == "Most Times Won":
-            st.dataframe(purple_caps_grouped, use_container_width=True, hide_index=True)
-        elif purple_sort == "Highest Wickets":
-            st.dataframe(purple_caps_base.sort_values(by='Wickets', ascending=False), use_container_width=True, hide_index=True)
-        elif purple_sort == "Lowest Wickets":
-            st.dataframe(purple_caps_base.sort_values(by='Wickets', ascending=True), use_container_width=True, hide_index=True)
-        else:
-            st.dataframe(purple_caps_base.sort_values(by='Year', ascending=False), use_container_width=True, hide_index=True)
-
-    # ---------------------------------------------------------
     # BATSMEN INSIGHTS
     # ---------------------------------------------------------
     st.markdown('<h2 class="group-header">Batsmen Insights</h2>', unsafe_allow_html=True)
@@ -922,6 +893,35 @@ elif page == "Deep Insights":
         fig10.update_traces(textposition='outside', textfont=dict(color='#F8FAFC', size=13), marker_line_width=0)
         fig10.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'})
         st.plotly_chart(apply_premium_layout(fig10), use_container_width=True)
+
+    # ---------------------------------------------------------
+    # SEASON AWARDS
+    # ---------------------------------------------------------
+    st.markdown('<h2 class="group-header">Season Awards</h2>', unsafe_allow_html=True)
+    col_a1, col_a2 = st.columns(2)
+    with col_a1:
+        st.markdown("### Orange Cap Winners")
+        orange_sort = st.selectbox("Sort Orange Caps By", ["Most Times Won", "Highest Runs", "Lowest Runs", "Recent Year"], key='orange_sort')
+        if orange_sort == "Most Times Won":
+            st.dataframe(orange_caps_grouped, use_container_width=True, hide_index=True)
+        elif orange_sort == "Highest Runs":
+            st.dataframe(orange_caps_base.sort_values(by='Runs', ascending=False), use_container_width=True, hide_index=True)
+        elif orange_sort == "Lowest Runs":
+            st.dataframe(orange_caps_base.sort_values(by='Runs', ascending=True), use_container_width=True, hide_index=True)
+        else:
+            st.dataframe(orange_caps_base.sort_values(by='Year', ascending=False), use_container_width=True, hide_index=True)
+            
+    with col_a2:
+        st.markdown("### Purple Cap Winners")
+        purple_sort = st.selectbox("Sort Purple Caps By", ["Most Times Won", "Highest Wickets", "Lowest Wickets", "Recent Year"], key='purple_sort')
+        if purple_sort == "Most Times Won":
+            st.dataframe(purple_caps_grouped, use_container_width=True, hide_index=True)
+        elif purple_sort == "Highest Wickets":
+            st.dataframe(purple_caps_base.sort_values(by='Wickets', ascending=False), use_container_width=True, hide_index=True)
+        elif purple_sort == "Lowest Wickets":
+            st.dataframe(purple_caps_base.sort_values(by='Wickets', ascending=True), use_container_width=True, hide_index=True)
+        else:
+            st.dataframe(purple_caps_base.sort_values(by='Year', ascending=False), use_container_width=True, hide_index=True)
 
 # --- Page: Player Comparison ---
 elif page == "Player Comparison":
