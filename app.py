@@ -736,6 +736,27 @@ elif page == "Deep Insights":
     pom_count.columns = ['Player', 'Awards']
     venues_count = matches['venue'].value_counts().reset_index().head(10)
     venues_count.columns = ['Venue', 'Matches Hosted']
+    
+    # Season Awards Computations
+    season_runs = deliveries.groupby(['season_year', 'batsman'])['batsman_runs'].sum().reset_index()
+    orange_caps = season_runs.loc[season_runs.groupby('season_year')['batsman_runs'].idxmax()].sort_values(by='season_year', ascending=False).reset_index(drop=True)
+    orange_caps.columns = ['Year', 'Player', 'Runs']
+    
+    season_wickets = wickets_df.groupby(['season_year', 'bowler'])['dismissal_kind'].count().reset_index()
+    purple_caps = season_wickets.loc[season_wickets.groupby('season_year')['dismissal_kind'].idxmax()].sort_values(by='season_year', ascending=False).reset_index(drop=True)
+    purple_caps.columns = ['Year', 'Player', 'Wickets']
+
+    # ---------------------------------------------------------
+    # SEASON AWARDS
+    # ---------------------------------------------------------
+    st.markdown('<h2 class="group-header">Season Awards</h2>', unsafe_allow_html=True)
+    col_a1, col_a2 = st.columns(2)
+    with col_a1:
+        st.markdown("### Orange Cap Winners")
+        st.dataframe(orange_caps, use_container_width=True, hide_index=True)
+    with col_a2:
+        st.markdown("### Purple Cap Winners")
+        st.dataframe(purple_caps, use_container_width=True, hide_index=True)
 
     # ---------------------------------------------------------
     # BATSMEN INSIGHTS
