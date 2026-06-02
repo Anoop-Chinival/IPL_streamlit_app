@@ -170,26 +170,18 @@ st.markdown("""
         flex: 0 0 auto !important;
     }
     @media (max-width: 768px) {
-        .block-container {
-            padding-bottom: 90px !important;
-        }
         .stRadio [role=radiogroup] {
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
+            width: 100% !important;
             background: rgba(15, 23, 42, 0.85) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
-            border-radius: 20px 20px 0 0 !important;
-            padding: 10px 5px 20px 5px !important;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.6) !important;
+            border-radius: 20px !important;
+            padding: 10px !important;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3) !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             justify-content: space-between !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-bottom: none !important;
             gap: 5px !important;
         }
         .stRadio [role=radiogroup] label p {
