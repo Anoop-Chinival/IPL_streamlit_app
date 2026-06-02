@@ -131,6 +131,11 @@ st.markdown("""
         line-height: 1.4;
     }
     
+    /* Fix mobile scroll hijacking by Plotly charts */
+    div[data-testid="stPlotlyChart"], .stPlotlyChart, .js-plotly-plot {
+        touch-action: pan-y !important;
+    }
+    
     /* Segmented Control Navigation */
     .stRadio [role=radiogroup] {
         display: flex;
