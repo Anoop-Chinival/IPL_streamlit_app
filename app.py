@@ -170,11 +170,17 @@ st.markdown("""
         flex: 0 0 auto !important;
     }
     @media (max-width: 768px) {
+        .stRadio [role=radiogroup] {
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
         .stRadio [role=radiogroup] label p {
-            font-size: 0.95rem !important;
+            font-size: 1.05rem !important;
         }
         .stRadio [role=radiogroup] label {
-            padding: 8px 15px !important;
+            width: 100% !important;
+            padding: 12px 15px !important;
+            flex: unset !important;
         }
     }
     .stRadio [role=radiogroup] label:hover {
@@ -858,8 +864,8 @@ elif page == "Deep Insights":
         st.markdown("### Average Runs Per Match Across Seasons")
         fig5 = px.line(avg_runs_season, x='season', y='total_runs', markers=True, template=CHART_THEME)
         fig5.update_traces(line_color='#38BDF8', line_width=4, marker=dict(size=12, color='#818CF8', line=dict(width=3, color='#020617')))
-        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=20, t=20, b=40), dragmode=False)
-        fig5.update_xaxes(fixedrange=True)
+        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=30, t=20, b=40), dragmode=False)
+        fig5.update_xaxes(fixedrange=True, range=[2007.5, 2025.5])
         fig5.update_yaxes(fixedrange=True)
         st.plotly_chart(fig5, use_container_width=True, config={'displayModeBar': False})
     with col12:
@@ -874,8 +880,8 @@ elif page == "Deep Insights":
         st.markdown("### Average Scoring Rate by Over (1 to 20)")
         fig8 = px.bar(runs_by_over, x='over', y='Expected Runs per Over', template=CHART_THEME, color='Expected Runs per Over', color_continuous_scale='Purp')
         fig8.update_traces(textposition='outside', texttemplate='%{y:.1f}', textfont=dict(color='#F8FAFC', size=11), marker_line_width=0)
-        fig8.update_layout(coloraxis_showscale=False, xaxis_title="Over Number", yaxis_title="Avg Runs per Over", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=20, t=30, b=40), font=dict(family="Inter, sans-serif", color="#94A3B8"), dragmode=False)
-        fig8.update_xaxes(tickmode='linear', tick0=1, dtick=1, showgrid=False, fixedrange=True, tickangle=0)
+        fig8.update_layout(coloraxis_showscale=False, xaxis_title="Over Number", yaxis_title="Avg Runs per Over", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=30, t=30, b=70), font=dict(family="Inter, sans-serif", color="#94A3B8"), dragmode=False)
+        fig8.update_xaxes(tickmode='linear', tick0=1, dtick=1, showgrid=False, fixedrange=True, tickangle=-90, range=[0.5, 20.5])
         fig8.update_yaxes(showgrid=False, fixedrange=True)
         st.plotly_chart(fig8, use_container_width=True, config={'displayModeBar': False})
     with col14:
