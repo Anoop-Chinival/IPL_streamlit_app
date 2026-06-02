@@ -738,8 +738,8 @@ elif page == "Deep Insights":
     toss_impact.columns = ['Won Match after Winning Toss', 'Count']
     toss_impact['Won Match after Winning Toss'] = toss_impact['Won Match after Winning Toss'].map({True: 'Yes', False: 'No'})
     
-    runs_per_season = deliveries.merge(matches[['matchId', 'season']], on='matchId', how='left').groupby(['season', 'matchId'])['total_runs'].sum().reset_index()
-    avg_runs_season = runs_per_season.groupby('season')['total_runs'].mean().reset_index()
+    runs_per_season = deliveries.groupby(['season_year', 'matchId'])['total_runs'].sum().reset_index()
+    avg_runs_season = runs_per_season.groupby('season_year')['total_runs'].mean().reset_index()
     
     over_totals = deliveries.groupby(['matchId', 'inning', 'over'])['total_runs'].sum().reset_index()
     runs_by_over = over_totals.groupby('over')['total_runs'].mean().reset_index()
@@ -862,10 +862,10 @@ elif page == "Deep Insights":
     col11, col12 = st.columns(2)
     with col11:
         st.markdown("### Average Runs Per Match Across Seasons")
-        fig5 = px.line(avg_runs_season, x='season', y='total_runs', markers=True, template=CHART_THEME)
+        fig5 = px.line(avg_runs_season, x='season_year', y='total_runs', markers=True, template=CHART_THEME)
         fig5.update_traces(line_color='#38BDF8', line_width=4, marker=dict(size=12, color='#818CF8', line=dict(width=3, color='#020617')))
         fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=40, t=20, b=40), dragmode=False)
-        fig5.update_xaxes(fixedrange=True)
+        fig5.update_xaxes(fixedrange=True, dtick=1, tickangle=-90)
         fig5.update_yaxes(fixedrange=True)
         st.plotly_chart(fig5, use_container_width=True, config={'displayModeBar': False})
     with col12:
