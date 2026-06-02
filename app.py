@@ -536,8 +536,8 @@ def map_venue_names(df, columns):
 # --- Data Loading ---
 @st.cache_data(show_spinner=False)
 def load_data():
-    matches_path = os.path.join(os.path.dirname(__file__), 'archive', 'matches_updated_ipl_upto_2025.csv')
-    deliveries_path = os.path.join(os.path.dirname(__file__), 'archive', 'deliveries_updated_ipl_upto_2025.csv')
+    matches_path = os.path.join(os.path.dirname(__file__), 'archive', 'matches_updated_ipl_upto_2026.csv')
+    deliveries_path = os.path.join(os.path.dirname(__file__), 'archive', 'deliveries_updated_ipl_upto_2026.csv')
     
     matches_df = pd.read_csv(matches_path)
     deliveries_df = pd.read_csv(deliveries_path)
@@ -651,7 +651,7 @@ st.markdown(f"""
         {logo_html}
         <div class="header-text-block">
             <h1>IPL Analytics</h1>
-            <p>Explore Indian Premier League Data (2008 - 2025) with cutting-edge analytics.</p>
+            <p>Explore Indian Premier League Data (2008 - 2026) with cutting-edge analytics.</p>
         </div>
     </div>
 """, unsafe_allow_html=True)
