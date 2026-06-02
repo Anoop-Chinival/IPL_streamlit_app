@@ -135,7 +135,7 @@ st.markdown("""
     .stRadio [role=radiogroup] {
         display: flex;
         flex-direction: row;
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
         justify-content: center;
         background: rgba(15, 23, 42, 0.6);
         border-radius: 30px;
@@ -171,16 +171,16 @@ st.markdown("""
     }
     @media (max-width: 768px) {
         .stRadio [role=radiogroup] {
-            flex-direction: column !important;
             gap: 10px !important;
+            border-radius: 15px !important;
         }
         .stRadio [role=radiogroup] label p {
-            font-size: 1.05rem !important;
+            font-size: 0.95rem !important;
         }
         .stRadio [role=radiogroup] label {
-            width: 100% !important;
-            padding: 12px 15px !important;
-            flex: unset !important;
+            padding: 8px 12px !important;
+            flex: 1 1 100% !important;
+            border-radius: 15px !important;
         }
     }
     .stRadio [role=radiogroup] label:hover {
