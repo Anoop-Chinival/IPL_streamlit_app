@@ -174,10 +174,15 @@ st.markdown("""
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
+            overflow: visible !important;
         }
         .stRadio [role=radiogroup] {
-            width: 100% !important;
-            margin: 0 auto !important;
+            position: relative !important;
+            width: calc(100vw - 2.5rem) !important;
+            max-width: none !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            margin: 0 !important;
             border-radius: 20px !important;
             background: rgba(15, 23, 42, 0.85) !important;
             backdrop-filter: blur(12px) !important;
