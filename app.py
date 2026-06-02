@@ -171,21 +171,18 @@ st.markdown("""
     }
     @media (max-width: 768px) {
         .stRadio [role=radiogroup] {
-            width: 100vw !important;
-            margin-left: calc(-50vw + 50%) !important;
-            border-radius: 0 !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+            border-radius: 20px !important;
             background: rgba(15, 23, 42, 0.85) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
-            padding: 10px 5px !important;
-            box-shadow: none !important;
+            padding: 8px !important;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3) !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             justify-content: space-between !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-left: none !important;
-            border-right: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
             gap: 5px !important;
         }
         .stRadio [role=radiogroup] label p {
