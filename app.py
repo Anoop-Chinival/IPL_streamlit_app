@@ -553,6 +553,7 @@ def map_venue_names(df, columns):
 # --- Data Loading ---
 @st.cache_data(show_spinner=False)
 def load_data():
+    # Cache invalidator: 2026 obvious names fix
     matches_path = os.path.join(os.path.dirname(__file__), 'archive', 'matches_updated_ipl_upto_2026.csv')
     deliveries_path = os.path.join(os.path.dirname(__file__), 'archive', 'deliveries_updated_ipl_upto_2026.csv')
     
