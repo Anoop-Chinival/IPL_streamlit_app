@@ -658,8 +658,12 @@ st.divider()
 def plot_mini_histogram(df, column, title, explanation, color="#38BDF8"):
     counts = df[column].value_counts().reset_index()
     counts.columns = [column, 'count']
-    if len(counts) > 10:
-        counts = counts.head(10)
+    
+    if column == 'season_year':
+        counts = counts.sort_values(by=column)
+    else:
+        if len(counts) > 10:
+            counts = counts.head(10)
     
     full_title = f"{title}<br><sup style='font-size:13px; color:#94A3B8;'>{explanation}</sup>"
     fig = px.bar(counts, x=column, y='count', title=full_title, template=CHART_THEME, color='count', color_continuous_scale='Blues')
@@ -695,7 +699,7 @@ if page == "Data Explorer":
         col2.metric("Total Features", matches.shape[1])
         st.write("")
         cols1 = st.columns(2)
-        with cols1[0]: st.plotly_chart(plot_mini_histogram(matches, 'season', 'Matches per Season', 'Shows how many matches were played in each IPL season.'), use_container_width=True, config={'displayModeBar': False})
+        with cols1[0]: st.plotly_chart(plot_mini_histogram(matches, 'season_year', 'Matches per Season', 'Shows how many matches were played in each IPL season.'), use_container_width=True, config={'displayModeBar': False})
         with cols1[1]: st.plotly_chart(plot_mini_histogram(matches, 'toss_decision', 'Toss Decisions', 'Shows the most frequent decisions made by captains after winning the toss.'), use_container_width=True, config={'displayModeBar': False})
         cols2 = st.columns(2)
         with cols2[0]: st.plotly_chart(plot_mini_histogram(matches, 'winner', 'Top Winners', 'Shows which teams have won the most matches across all seasons.'), use_container_width=True, config={'displayModeBar': False})
