@@ -172,16 +172,14 @@ st.markdown("""
     @media (max-width: 768px) {
         div[data-testid="stRadio"], .stRadio, div[data-testid="stRadio"] > div {
             width: 100% !important;
-            display: flex !important;
-            justify-content: center !important;
+            min-width: 100% !important;
+            display: block !important;
             overflow: visible !important;
         }
         .stRadio [role=radiogroup] {
-            position: relative !important;
-            width: calc(100vw - 2.5rem) !important;
-            max-width: none !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
+            display: flex !important;
+            width: 100% !important;
+            min-width: 100% !important;
             margin: 0 !important;
             border-radius: 20px !important;
             background: rgba(15, 23, 42, 0.85) !important;
@@ -193,7 +191,7 @@ st.markdown("""
             flex-wrap: nowrap !important;
             justify-content: space-between !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            gap: 5px !important;
+            gap: 2px !important;
         }
         .stRadio [role=radiogroup] label p {
             font-size: 0.65rem !important;
