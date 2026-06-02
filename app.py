@@ -1013,8 +1013,9 @@ elif page == "Player Comparison":
         all_venues = sorted(deliveries['venue'].dropna().unique())
         all_bowlers = sorted(deliveries['bowler'].dropna().unique())
         all_seasons = sorted(deliveries['season_year'].dropna().unique())
+        all_teams_b = sorted(deliveries['bowling_team'].dropna().unique())
         
-        col_b1, col_b2, col_b3, col_b4 = st.columns(4)
+        col_b1, col_b2, col_b3, col_b4, col_b5 = st.columns(5)
         with col_b1:
             selected_batsmen = st.multiselect("Select Batsmen to Compare", all_batsmen, default=["Virat Kohli", "Mahendra Singh Dhoni", "Rohit Sharma"])
         with col_b2:
@@ -1022,6 +1023,8 @@ elif page == "Player Comparison":
         with col_b3:
             selected_bowler_b = st.selectbox("Against Bowler", ["All Bowlers"] + list(all_bowlers), key="bowler_bat")
         with col_b4:
+            selected_team_b = st.selectbox("Against Team", ["All Teams"] + list(all_teams_b), key="team_bat")
+        with col_b5:
             selected_season_b = st.selectbox("Select Season", ["All Seasons"] + list(all_seasons), key="season_bat")
         
         if len(selected_batsmen) > 0:
@@ -1032,6 +1035,8 @@ elif page == "Player Comparison":
                     pdf = pdf[pdf['venue'] == selected_venue_b]
                 if selected_bowler_b != "All Bowlers":
                     pdf = pdf[pdf['bowler'] == selected_bowler_b]
+                if selected_team_b != "All Teams":
+                    pdf = pdf[pdf['bowling_team'] == selected_team_b]
                 if selected_season_b != "All Seasons":
                     pdf = pdf[pdf['season_year'] == selected_season_b]
                 if pdf.empty: continue
@@ -1109,6 +1114,8 @@ elif page == "Player Comparison":
                         player_dismissals = deliveries[(deliveries['player_dismissed'] == player) & (deliveries['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket']))]
                         if selected_venue_b != "All Venues":
                             player_dismissals = player_dismissals[player_dismissals['venue'] == selected_venue_b]
+                        if selected_team_b != "All Teams":
+                            player_dismissals = player_dismissals[player_dismissals['bowling_team'] == selected_team_b]
                         if selected_season_b != "All Seasons":
                             player_dismissals = player_dismissals[player_dismissals['season_year'] == selected_season_b]
                         
@@ -1120,6 +1127,8 @@ elif page == "Player Comparison":
                             b_deliv = deliveries[(deliveries['batsman'] == player) & (deliveries['bowler'] == b_name)]
                             if selected_venue_b != "All Venues":
                                 b_deliv = b_deliv[b_deliv['venue'] == selected_venue_b]
+                            if selected_team_b != "All Teams":
+                                b_deliv = b_deliv[b_deliv['bowling_team'] == selected_team_b]
                             if selected_season_b != "All Seasons":
                                 b_deliv = b_deliv[b_deliv['season_year'] == selected_season_b]
                             
@@ -1136,8 +1145,9 @@ elif page == "Player Comparison":
         all_venues = sorted(deliveries['venue'].dropna().unique())
         all_batsmen = sorted(deliveries['batsman'].dropna().unique())
         all_seasons = sorted(deliveries['season_year'].dropna().unique())
+        all_teams_bw = sorted(deliveries['batting_team'].dropna().unique())
         
-        col_bw1, col_bw2, col_bw3, col_bw4 = st.columns(4)
+        col_bw1, col_bw2, col_bw3, col_bw4, col_bw5 = st.columns(5)
         with col_bw1:
             selected_bowlers = st.multiselect("Select Bowlers to Compare", all_bowlers, default=["Lasith Malinga", "Jasprit Bumrah", "Rashid Khan"])
         with col_bw2:
@@ -1145,6 +1155,8 @@ elif page == "Player Comparison":
         with col_bw3:
             selected_batsman_bw = st.selectbox("Against Batsman", ["All Batsmen"] + list(all_batsmen), key="batsman_bowl")
         with col_bw4:
+            selected_team_bw = st.selectbox("Against Team", ["All Teams"] + list(all_teams_bw), key="team_bowl")
+        with col_bw5:
             selected_season_bw = st.selectbox("Select Season", ["All Seasons"] + list(all_seasons), key="season_bowl")
         
         if len(selected_bowlers) > 0:
@@ -1155,6 +1167,8 @@ elif page == "Player Comparison":
                     pdf = pdf[pdf['venue'] == selected_venue_bw]
                 if selected_batsman_bw != "All Batsmen":
                     pdf = pdf[pdf['batsman'] == selected_batsman_bw]
+                if selected_team_bw != "All Teams":
+                    pdf = pdf[pdf['batting_team'] == selected_team_bw]
                 if selected_season_bw != "All Seasons":
                     pdf = pdf[pdf['season_year'] == selected_season_bw]
                 if pdf.empty: continue
@@ -1229,6 +1243,8 @@ elif page == "Player Comparison":
                         player_wickets = deliveries[(deliveries['bowler'] == player) & (deliveries['dismissal_kind'].isin(['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket']))]
                         if selected_venue_bw != "All Venues":
                             player_wickets = player_wickets[player_wickets['venue'] == selected_venue_bw]
+                        if selected_team_bw != "All Teams":
+                            player_wickets = player_wickets[player_wickets['batting_team'] == selected_team_bw]
                         if selected_season_bw != "All Seasons":
                             player_wickets = player_wickets[player_wickets['season_year'] == selected_season_bw]
                         
@@ -1240,6 +1256,8 @@ elif page == "Player Comparison":
                             b_deliv = deliveries[(deliveries['bowler'] == player) & (deliveries['batsman'] == bat_name)]
                             if selected_venue_bw != "All Venues":
                                 b_deliv = b_deliv[b_deliv['venue'] == selected_venue_bw]
+                            if selected_team_bw != "All Teams":
+                                b_deliv = b_deliv[b_deliv['batting_team'] == selected_team_bw]
                             if selected_season_bw != "All Seasons":
                                 b_deliv = b_deliv[b_deliv['season_year'] == selected_season_bw]
                             
