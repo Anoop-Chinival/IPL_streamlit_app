@@ -864,8 +864,8 @@ elif page == "Deep Insights":
         st.markdown("### Average Runs Per Match Across Seasons")
         fig5 = px.line(avg_runs_season, x='season', y='total_runs', markers=True, template=CHART_THEME)
         fig5.update_traces(line_color='#38BDF8', line_width=4, marker=dict(size=12, color='#818CF8', line=dict(width=3, color='#020617')))
-        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=30, t=20, b=40), dragmode=False)
-        fig5.update_xaxes(fixedrange=True, range=[2007.5, 2025.5])
+        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=40, t=20, b=40), dragmode=False)
+        fig5.update_xaxes(fixedrange=True)
         fig5.update_yaxes(fixedrange=True)
         st.plotly_chart(fig5, use_container_width=True, config={'displayModeBar': False})
     with col12:
