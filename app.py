@@ -1116,7 +1116,10 @@ elif page == "Player Comparison":
                     fig_sr.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total ascending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_sr, height=chart_height), use_container_width=True)
                 
-                st.markdown("<br><h3 class='group-header'>Top 10 Nemeses (Most Times Dismissed By)</h3>", unsafe_allow_html=True)
+                if selected_season_b != "All Seasons":
+                    st.markdown(f"<br><h3 class='group-header'>All Nemeses in {selected_season_b} (Most Times Dismissed By)</h3>", unsafe_allow_html=True)
+                else:
+                    st.markdown("<br><h3 class='group-header'>Top 10 Nemeses (Most Times Dismissed By)</h3>", unsafe_allow_html=True)
                 cols_nemesis = st.columns(len(selected_batsmen))
                 for idx, player in enumerate(selected_batsmen):
                     with cols_nemesis[idx]:
@@ -1129,7 +1132,10 @@ elif page == "Player Comparison":
                         if selected_season_b != "All Seasons":
                             player_dismissals = player_dismissals[player_dismissals['season_year'] == selected_season_b]
                         
-                        top_bowlers = player_dismissals['bowler'].value_counts().head(10).reset_index()
+                        if selected_season_b != "All Seasons":
+                            top_bowlers = player_dismissals['bowler'].value_counts().reset_index()
+                        else:
+                            top_bowlers = player_dismissals['bowler'].value_counts().head(10).reset_index()
                         top_bowlers.columns = ['Bowler Name', 'outs']
                         
                         formatted_stats = []
@@ -1245,7 +1251,10 @@ elif page == "Player Comparison":
                     fig_ec.update_layout(coloraxis_showscale=False, yaxis={'categoryorder':'total descending'}, bargap=0.15)
                     st.plotly_chart(apply_premium_layout(fig_ec, height=chart_height), use_container_width=True)
                 
-                st.markdown("<br><h3 class='group-header'>Top 10 Bunnies (Most Times Dismissed)</h3>", unsafe_allow_html=True)
+                if selected_season_bw != "All Seasons":
+                    st.markdown(f"<br><h3 class='group-header'>All Bunnies in {selected_season_bw} (Most Times Dismissed)</h3>", unsafe_allow_html=True)
+                else:
+                    st.markdown("<br><h3 class='group-header'>Top 10 Bunnies (Most Times Dismissed)</h3>", unsafe_allow_html=True)
                 cols_bunny = st.columns(len(selected_bowlers))
                 for idx, player in enumerate(selected_bowlers):
                     with cols_bunny[idx]:
@@ -1258,7 +1267,10 @@ elif page == "Player Comparison":
                         if selected_season_bw != "All Seasons":
                             player_wickets = player_wickets[player_wickets['season_year'] == selected_season_bw]
                         
-                        top_batsmen = player_wickets['player_dismissed'].value_counts().head(10).reset_index()
+                        if selected_season_bw != "All Seasons":
+                            top_batsmen = player_wickets['player_dismissed'].value_counts().reset_index()
+                        else:
+                            top_batsmen = player_wickets['player_dismissed'].value_counts().head(10).reset_index()
                         top_batsmen.columns = ['Batsman Name', 'outs']
                         
                         formatted_stats = []
