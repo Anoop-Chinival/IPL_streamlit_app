@@ -165,8 +165,17 @@ st.markdown("""
         transition: all 0.3s ease;
         cursor: pointer;
         text-align: center;
+        text-align: center;
         white-space: nowrap !important;
-        flex: 1 1 auto;
+        flex: 0 0 auto !important;
+    }
+    @media (max-width: 768px) {
+        .stRadio [role=radiogroup] label p {
+            font-size: 0.95rem !important;
+        }
+        .stRadio [role=radiogroup] label {
+            padding: 8px 15px !important;
+        }
     }
     .stRadio [role=radiogroup] label:hover {
         background: rgba(255, 255, 255, 0.05) !important;
@@ -517,8 +526,8 @@ def apply_premium_layout(fig, height=350, show_x=False):
         paper_bgcolor='rgba(0,0,0,0)',
         height=height,
         margin=dict(l=0, r=60, t=35, b=0),
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=show_x, title=""),
-        yaxis=dict(showgrid=False, zeroline=False, title="", tickfont=dict(color='#E2E8F0', size=13)),
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=show_x, title="", fixedrange=True),
+        yaxis=dict(showgrid=False, zeroline=False, title="", tickfont=dict(color='#E2E8F0', size=13), fixedrange=True),
         hovermode='closest',
         dragmode=False,
         font=dict(family="Inter, sans-serif", color="#94A3B8")
@@ -849,8 +858,10 @@ elif page == "Deep Insights":
         st.markdown("### Average Runs Per Match Across Seasons")
         fig5 = px.line(avg_runs_season, x='season', y='total_runs', markers=True, template=CHART_THEME)
         fig5.update_traces(line_color='#38BDF8', line_width=4, marker=dict(size=12, color='#818CF8', line=dict(width=3, color='#020617')))
-        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=20, t=20, b=0))
-        st.plotly_chart(fig5, use_container_width=True)
+        fig5.update_layout(xaxis_title="Season", yaxis_title="Average Runs per Match", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter, sans-serif", color="#94A3B8"), margin=dict(l=0, r=20, t=20, b=40), dragmode=False)
+        fig5.update_xaxes(fixedrange=True)
+        fig5.update_yaxes(fixedrange=True)
+        st.plotly_chart(fig5, use_container_width=True, config={'displayModeBar': False})
     with col12:
         st.markdown("### Toss Impact on Match Outcome")
         fig4 = px.pie(toss_impact, values='Count', names='Won Match after Winning Toss', hole=0.55, template=CHART_THEME, color_discrete_sequence=['#10B981', '#F43F5E'])
@@ -863,10 +874,10 @@ elif page == "Deep Insights":
         st.markdown("### Average Scoring Rate by Over (1 to 20)")
         fig8 = px.bar(runs_by_over, x='over', y='Expected Runs per Over', template=CHART_THEME, color='Expected Runs per Over', color_continuous_scale='Purp')
         fig8.update_traces(textposition='outside', texttemplate='%{y:.1f}', textfont=dict(color='#F8FAFC', size=11), marker_line_width=0)
-        fig8.update_layout(coloraxis_showscale=False, xaxis_title="Over Number", yaxis_title="Avg Runs per Over", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=20, t=30, b=0), font=dict(family="Inter, sans-serif", color="#94A3B8"))
-        fig8.update_xaxes(tickmode='linear', tick0=1, dtick=1, showgrid=False)
-        fig8.update_yaxes(showgrid=False)
-        st.plotly_chart(fig8, use_container_width=True)
+        fig8.update_layout(coloraxis_showscale=False, xaxis_title="Over Number", yaxis_title="Avg Runs per Over", plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=20, t=30, b=40), font=dict(family="Inter, sans-serif", color="#94A3B8"), dragmode=False)
+        fig8.update_xaxes(tickmode='linear', tick0=1, dtick=1, showgrid=False, fixedrange=True, tickangle=0)
+        fig8.update_yaxes(showgrid=False, fixedrange=True)
+        st.plotly_chart(fig8, use_container_width=True, config={'displayModeBar': False})
     with col14:
         st.markdown("### Highest Run Score in a Single Over")
         fig16 = go.Figure(data=[go.Table(
