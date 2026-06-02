@@ -662,11 +662,11 @@ def plot_mini_histogram(df, column, title, color="#38BDF8"):
         counts = counts.head(10)
     
     fig = px.bar(counts, x=column, y='count', title=title, template=CHART_THEME, color='count', color_continuous_scale='Blues')
-    fig.update_layout(margin=dict(l=0, r=0, t=40, b=0), height=150, xaxis_title=None, yaxis_title=None, 
-                      xaxis_showticklabels=False, yaxis_showticklabels=False, plot_bgcolor='rgba(0,0,0,0)', 
-                      paper_bgcolor='rgba(0,0,0,0)', title_font_size=14, title_font_color="#E2E8F0",
-                      coloraxis_showscale=False)
-    fig.update_traces(marker_line_width=0, opacity=0.9)
+    fig.update_traces(texttemplate='%{y}', textposition='outside', marker_line_width=0, opacity=0.9, textfont=dict(color='#F8FAFC', size=11))
+    fig = apply_premium_layout(fig, height=350)
+    fig.update_layout(xaxis_title=column.replace('_', ' ').title(), yaxis_title="Count", coloraxis_showscale=False, title_font_size=16, title_font_color="#E2E8F0", margin=dict(t=50, b=40, l=0, r=0))
+    fig.update_xaxes(showgrid=False, tickangle=-45)
+    fig.update_yaxes(showgrid=False, fixedrange=True)
     return fig
 
 # --- Page: Data Explorer ---
@@ -683,11 +683,12 @@ if page == "Data Explorer":
         col1.metric("Total Matches", f"{matches.shape[0]:,}")
         col2.metric("Total Features", matches.shape[1])
         st.write("")
-        cols = st.columns(4)
-        with cols[0]: st.plotly_chart(plot_mini_histogram(matches, 'season', 'Matches per Season'), use_container_width=True)
-        with cols[1]: st.plotly_chart(plot_mini_histogram(matches, 'toss_decision', 'Toss Decisions'), use_container_width=True)
-        with cols[2]: st.plotly_chart(plot_mini_histogram(matches, 'winner', 'Top Winners'), use_container_width=True)
-        with cols[3]: st.plotly_chart(plot_mini_histogram(matches, 'venue', 'Top Venues'), use_container_width=True)
+        cols1 = st.columns(2)
+        with cols1[0]: st.plotly_chart(plot_mini_histogram(matches, 'season', 'Matches per Season'), use_container_width=True, config={'displayModeBar': False})
+        with cols1[1]: st.plotly_chart(plot_mini_histogram(matches, 'toss_decision', 'Toss Decisions'), use_container_width=True, config={'displayModeBar': False})
+        cols2 = st.columns(2)
+        with cols2[0]: st.plotly_chart(plot_mini_histogram(matches, 'winner', 'Top Winners'), use_container_width=True, config={'displayModeBar': False})
+        with cols2[1]: st.plotly_chart(plot_mini_histogram(matches, 'venue', 'Top Venues'), use_container_width=True, config={'displayModeBar': False})
         st.write("")
         st.dataframe(matches, height=500, use_container_width=True)
         
@@ -696,12 +697,12 @@ if page == "Data Explorer":
         col1.metric("Total Deliveries", f"{deliveries.shape[0]:,}")
         col2.metric("Total Features", deliveries.shape[1])
         st.write("")
-        cols = st.columns(4)
-        with cols[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batting_team', 'Batting Teams'), use_container_width=True)
-        with cols[1]: st.plotly_chart(plot_mini_histogram(deliveries, 'bowling_team', 'Bowling Teams'), use_container_width=True)
-        with cols[2]: st.plotly_chart(plot_mini_histogram(deliveries, 'batsman_runs', 'Runs Scored per Ball'), use_container_width=True)
-        with cols[3]:
-            st.plotly_chart(plot_mini_histogram(deliveries[deliveries['dismissal_kind'].notna()], 'dismissal_kind', 'Dismissal Types'), use_container_width=True)
+        cols3 = st.columns(2)
+        with cols3[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batting_team', 'Batting Teams'), use_container_width=True, config={'displayModeBar': False})
+        with cols3[1]: st.plotly_chart(plot_mini_histogram(deliveries, 'bowling_team', 'Bowling Teams'), use_container_width=True, config={'displayModeBar': False})
+        cols4 = st.columns(2)
+        with cols4[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batsman_runs', 'Runs Scored per Ball'), use_container_width=True, config={'displayModeBar': False})
+        with cols4[1]: st.plotly_chart(plot_mini_histogram(deliveries[deliveries['dismissal_kind'].notna()], 'dismissal_kind', 'Dismissal Types'), use_container_width=True, config={'displayModeBar': False})
         st.write("")
         st.dataframe(deliveries.head(10000), height=500, use_container_width=True)
 
