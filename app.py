@@ -170,17 +170,42 @@ st.markdown("""
         flex: 0 0 auto !important;
     }
     @media (max-width: 768px) {
+        .block-container {
+            padding-bottom: 90px !important;
+        }
         .stRadio [role=radiogroup] {
-            gap: 10px !important;
-            border-radius: 15px !important;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            z-index: 99999 !important;
+            background: rgba(15, 23, 42, 0.85) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 10px 5px 20px 5px !important;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.6) !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            justify-content: space-between !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-bottom: none !important;
+            gap: 5px !important;
         }
         .stRadio [role=radiogroup] label p {
-            font-size: 0.95rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            white-space: normal !important;
+            line-height: 1.2 !important;
         }
         .stRadio [role=radiogroup] label {
-            padding: 8px 12px !important;
-            flex: 1 1 100% !important;
-            border-radius: 15px !important;
+            padding: 10px 5px !important;
+            flex: 1 1 0 !important;
+            border-radius: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: auto !important;
         }
     }
     .stRadio [role=radiogroup] label:hover {
