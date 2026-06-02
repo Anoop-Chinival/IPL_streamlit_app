@@ -170,43 +170,44 @@ st.markdown("""
         flex: 0 0 auto !important;
     }
     @media (max-width: 768px) {
-        div[data-testid="stRadio"], .stRadio, div[data-testid="stRadio"] > div {
+        .element-container:has(div[role="radiogroup"]),
+        div[data-testid="stRadio"],
+        div[data-testid="stRadio"] > div {
             width: 100% !important;
             min-width: 100% !important;
             display: block !important;
-            overflow: visible !important;
         }
-        .stRadio [role=radiogroup] {
-            display: flex !important;
+        div[role="radiogroup"] {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
             width: 100% !important;
             min-width: 100% !important;
             margin: 0 !important;
-            border-radius: 20px !important;
+            border-radius: 15px !important;
             background: rgba(15, 23, 42, 0.85) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
-            padding: 8px !important;
+            padding: 6px !important;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.3) !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            justify-content: space-between !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             gap: 2px !important;
         }
-        .stRadio [role=radiogroup] label p {
-            font-size: 0.65rem !important;
-            font-weight: 600 !important;
-            white-space: nowrap !important;
-            line-height: 1.2 !important;
-        }
-        .stRadio [role=radiogroup] label {
-            padding: 10px 5px !important;
-            flex: 1 1 0 !important;
-            border-radius: 12px !important;
+        div[role="radiogroup"] label {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 10px 2px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            height: auto !important;
+            border-radius: 10px !important;
+            background: transparent !important;
+        }
+        div[role="radiogroup"] label p {
+            font-size: 0.65rem !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+            line-height: 1 !important;
         }
     }
     .stRadio [role=radiogroup] label:hover {
