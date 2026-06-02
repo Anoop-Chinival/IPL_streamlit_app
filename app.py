@@ -276,6 +276,14 @@ st.markdown("""
 
 # --- Player Name Mapping ---
 PLAYER_MAPPING = {
+    "AM Ghazanfar": "Allah Ghazanfar",
+    "P Nissanka": "Pathum Nissanka",
+    "N Sindhu": "Nishant Sindhu",
+    "D Madushanka": "Dilshan Madushanka",
+    "FH Allen": "Finn Allen",
+    "GF Linde": "George Linde",
+    "C Connolly": "Cooper Connolly",
+    "JA Duffy": "Jacob Duffy",
     "V Kohli": "Virat Kohli", "S Dhawan": "Shikhar Dhawan", "RG Sharma": "Rohit Sharma",
     "DA Warner": "David Warner", "SK Raina": "Suresh Raina", "AM Rahane": "Ajinkya Rahane",
     "MS Dhoni": "Mahendra Singh Dhoni", "KL Rahul": "KL Rahul", "RV Uthappa": "Robin Uthappa",
@@ -476,7 +484,7 @@ PLAYER_MAPPING = {
     "DE Bollinger": "Doug Bollinger", "BR Dunk": "Ben Dunk", "AM Salvi": "Aavishkar Salvi", "SB Dubey": "Saurabh Dubey",
     "R Bishnoi": "Rajesh Bishnoi", "GB Hogg": "Brad Hogg", "H Das": "Halhadar Das", "N Burger": "Nandre Burger",
     "MJ Owen": "Michael Owen", "V Viyaskanth": "V Viyaskanth", "J Botha": "Johan Botha", "M Tiwari": "Manoj Tiwari",
-    "V Suryavanshi": "V Suryavanshi", "Virat Singh": "Virat Singh", "VY Mahesh": "Yo Mahesh", "Mukesh Kumar": "Mukesh Kumar",
+    "V Suryavanshi": "Vaibhav Suryavanshi", "Virat Singh": "Virat Singh", "VY Mahesh": "Yo Mahesh", "Mukesh Kumar": "Mukesh Kumar",
     "M de Lange": "Marchant de Lange", "CJ Anderson": "Corey Anderson", "B Akhil": "Balachandra Akhil", "UT Khawaja": "Usman Khawaja",
     "Harpreet Singh": "Harpreet Singh", "Umar Gul": "Umar Gul", "DG Nalkande": "Darshan Nalkande", "BCJ Cutting": "Ben Cutting",
     "OC McCoy": "Obed McCoy", "LR Shukla": "Laxmi Ratan Shukla", "CK Langeveldt": "Charl Langeveldt", "A Ashish Reddy": "Ashish Reddy",
