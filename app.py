@@ -170,6 +170,11 @@ st.markdown("""
         flex: 0 0 auto !important;
     }
     @media (max-width: 768px) {
+        .stRadio {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+        }
         .stRadio [role=radiogroup] {
             width: 100% !important;
             margin: 0 auto !important;
@@ -186,9 +191,9 @@ st.markdown("""
             gap: 5px !important;
         }
         .stRadio [role=radiogroup] label p {
-            font-size: 0.75rem !important;
+            font-size: 0.65rem !important;
             font-weight: 600 !important;
-            white-space: normal !important;
+            white-space: nowrap !important;
             line-height: 1.2 !important;
         }
         .stRadio [role=radiogroup] label {
