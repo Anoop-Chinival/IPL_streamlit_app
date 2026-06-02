@@ -550,6 +550,10 @@ def load_data():
     matches_df = pd.read_csv(matches_path)
     deliveries_df = pd.read_csv(deliveries_path)
     
+    # Fill missing winners for tied matches (Super Overs) using the 'eliminator' column
+    if 'eliminator' in matches_df.columns:
+        matches_df['winner'] = matches_df['winner'].fillna(matches_df['eliminator'])
+
     matches_df = map_player_names(matches_df, ['player_of_match'])
     deliveries_df = map_player_names(deliveries_df, ['batsman', 'bowler', 'non_striker', 'player_dismissed'])
     
