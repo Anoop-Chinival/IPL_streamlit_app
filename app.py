@@ -655,16 +655,17 @@ st.write("")
 page = st.radio("Navigation", ["Data Explorer", "Deep Insights", "Player Comparison"], horizontal=True, label_visibility="collapsed")
 st.divider()
 
-def plot_mini_histogram(df, column, title, color="#38BDF8"):
+def plot_mini_histogram(df, column, title, explanation, color="#38BDF8"):
     counts = df[column].value_counts().reset_index()
     counts.columns = [column, 'count']
     if len(counts) > 10:
         counts = counts.head(10)
     
-    fig = px.bar(counts, x=column, y='count', title=title, template=CHART_THEME, color='count', color_continuous_scale='Blues')
+    full_title = f"{title}<br><sup style='font-size:13px; color:#94A3B8;'>{explanation}</sup>"
+    fig = px.bar(counts, x=column, y='count', title=full_title, template=CHART_THEME, color='count', color_continuous_scale='Blues')
     custom_hovertemplate = "<b>%{x}</b><br>" + title + ": <b>%{y}</b><extra></extra>"
     fig.update_traces(texttemplate='%{y}', textposition='outside', marker_line_width=0, opacity=0.9, textfont=dict(color='#F8FAFC', size=11), hovertemplate=custom_hovertemplate, cliponaxis=False)
-    fig = apply_premium_layout(fig, height=350)
+    fig = apply_premium_layout(fig, height=350, show_x=True)
     fig.update_layout(
         xaxis_title=column.replace('_', ' ').title(), 
         yaxis_title="Count", 
@@ -694,11 +695,11 @@ if page == "Data Explorer":
         col2.metric("Total Features", matches.shape[1])
         st.write("")
         cols1 = st.columns(2)
-        with cols1[0]: st.plotly_chart(plot_mini_histogram(matches, 'season', 'Matches per Season'), use_container_width=True, config={'displayModeBar': False})
-        with cols1[1]: st.plotly_chart(plot_mini_histogram(matches, 'toss_decision', 'Toss Decisions'), use_container_width=True, config={'displayModeBar': False})
+        with cols1[0]: st.plotly_chart(plot_mini_histogram(matches, 'season', 'Matches per Season', 'Shows how many matches were played in each IPL season.'), use_container_width=True, config={'displayModeBar': False})
+        with cols1[1]: st.plotly_chart(plot_mini_histogram(matches, 'toss_decision', 'Toss Decisions', 'Shows the most frequent decisions made by captains after winning the toss.'), use_container_width=True, config={'displayModeBar': False})
         cols2 = st.columns(2)
-        with cols2[0]: st.plotly_chart(plot_mini_histogram(matches, 'winner', 'Top Winners'), use_container_width=True, config={'displayModeBar': False})
-        with cols2[1]: st.plotly_chart(plot_mini_histogram(matches, 'venue', 'Top Venues'), use_container_width=True, config={'displayModeBar': False})
+        with cols2[0]: st.plotly_chart(plot_mini_histogram(matches, 'winner', 'Top Winners', 'Shows which teams have won the most matches across all seasons.'), use_container_width=True, config={'displayModeBar': False})
+        with cols2[1]: st.plotly_chart(plot_mini_histogram(matches, 'venue', 'Top Venues', 'Shows the stadiums that have hosted the highest number of matches.'), use_container_width=True, config={'displayModeBar': False})
         st.write("")
         st.dataframe(matches, height=500, use_container_width=True)
         
@@ -708,11 +709,11 @@ if page == "Data Explorer":
         col2.metric("Total Features", deliveries.shape[1])
         st.write("")
         cols3 = st.columns(2)
-        with cols3[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batting_team', 'Batting Teams'), use_container_width=True, config={'displayModeBar': False})
-        with cols3[1]: st.plotly_chart(plot_mini_histogram(deliveries, 'bowling_team', 'Bowling Teams'), use_container_width=True, config={'displayModeBar': False})
+        with cols3[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batting_team', 'Batting Teams', 'Shows which teams have faced the most deliveries (balls played).'), use_container_width=True, config={'displayModeBar': False})
+        with cols3[1]: st.plotly_chart(plot_mini_histogram(deliveries, 'bowling_team', 'Bowling Teams', 'Shows which teams have bowled the most deliveries.'), use_container_width=True, config={'displayModeBar': False})
         cols4 = st.columns(2)
-        with cols4[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batsman_runs', 'Runs Scored per Ball'), use_container_width=True, config={'displayModeBar': False})
-        with cols4[1]: st.plotly_chart(plot_mini_histogram(deliveries[deliveries['dismissal_kind'].notna()], 'dismissal_kind', 'Dismissal Types'), use_container_width=True, config={'displayModeBar': False})
+        with cols4[0]: st.plotly_chart(plot_mini_histogram(deliveries, 'batsman_runs', 'Runs Scored per Ball', 'Shows how often a ball resulted in a specific number of runs (0, 1, 4, 6).'), use_container_width=True, config={'displayModeBar': False})
+        with cols4[1]: st.plotly_chart(plot_mini_histogram(deliveries[deliveries['dismissal_kind'].notna()], 'dismissal_kind', 'Dismissal Types', 'Shows the most common ways batsmen get out (e.g., caught, bowled).'), use_container_width=True, config={'displayModeBar': False})
         st.write("")
         st.dataframe(deliveries.head(10000), height=500, use_container_width=True)
 
