@@ -662,9 +662,19 @@ def plot_mini_histogram(df, column, title, color="#38BDF8"):
         counts = counts.head(10)
     
     fig = px.bar(counts, x=column, y='count', title=title, template=CHART_THEME, color='count', color_continuous_scale='Blues')
-    fig.update_traces(texttemplate='%{y}', textposition='outside', marker_line_width=0, opacity=0.9, textfont=dict(color='#F8FAFC', size=11))
+    custom_hovertemplate = "<b>%{x}</b><br>" + title + ": <b>%{y}</b><extra></extra>"
+    fig.update_traces(texttemplate='%{y}', textposition='outside', marker_line_width=0, opacity=0.9, textfont=dict(color='#F8FAFC', size=11), hovertemplate=custom_hovertemplate, cliponaxis=False)
     fig = apply_premium_layout(fig, height=350)
-    fig.update_layout(xaxis_title=column.replace('_', ' ').title(), yaxis_title="Count", coloraxis_showscale=False, title_font_size=16, title_font_color="#E2E8F0", margin=dict(t=50, b=60, l=15, r=25), dragmode=False)
+    fig.update_layout(
+        xaxis_title=column.replace('_', ' ').title(), 
+        yaxis_title="Count", 
+        coloraxis_showscale=False, 
+        title_font_size=16, 
+        title_font_color="#E2E8F0", 
+        margin=dict(t=50, b=60, l=20, r=30), 
+        dragmode=False,
+        hoverlabel=dict(bgcolor="rgba(15, 23, 42, 0.95)", font_size=12)
+    )
     fig.update_xaxes(showgrid=False, tickangle=-45, fixedrange=True)
     fig.update_yaxes(showgrid=False, fixedrange=True)
     return fig
