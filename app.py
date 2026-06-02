@@ -170,7 +170,7 @@ st.markdown("""
         flex: 0 0 auto !important;
     }
     @media (max-width: 768px) {
-        .stRadio {
+        div[data-testid="stRadio"], .stRadio, div[data-testid="stRadio"] > div {
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
